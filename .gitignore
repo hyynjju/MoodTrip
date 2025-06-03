@@ -1,0 +1,23 @@
+# Xcode
+DerivedData/
+build/
+*.xcuserdata
+*.xcworkspace
+*.swp
+.DS_Store
+
+# SwiftPM
+/.swiftpm/
+/.build/
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+
