@@ -20,7 +20,7 @@ class SurveyQuestionView: UIView {
         let label = UILabel()
         label.text = question
         label.textColor = .white
-        label.font = .boldSystemFont(ofSize: 20)
+        label.font = .appFont(ofSize: 20, weight: .bold)
         label.textAlignment = .left // ✅ 왼쪽 정렬
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
@@ -37,7 +37,7 @@ class SurveyQuestionView: UIView {
             let button = GradientButton()
             button.setTitle(title, for: .normal)
             button.setTitleColor(.white, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 17)
+            button.titleLabel?.font = .appFont(ofSize: 17)
             button.contentHorizontalAlignment = .left // ✅ 텍스트 왼쪽 정렬
             button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20) // ✅ 왼쪽 패딩
             button.layer.cornerRadius = 12
@@ -50,8 +50,8 @@ class SurveyQuestionView: UIView {
             addSubview(button)
 
             NSLayoutConstraint.activate([
-                button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
-                button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
+                button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
                 button.heightAnchor.constraint(equalToConstant: 52),
                 button.topAnchor.constraint(equalTo: previous!.bottomAnchor, constant: 20)
             ])
