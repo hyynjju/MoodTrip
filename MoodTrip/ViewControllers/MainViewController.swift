@@ -8,12 +8,13 @@ class MainViewController: UIViewController {
         let titleLabel = UILabel()
         titleLabel.text = "Hello,\nlet's find your place"
         titleLabel.textColor = .white
-        titleLabel.font = .boldSystemFont(ofSize: 28)
+        titleLabel.font = .happyFont(ofSize: 28)
         titleLabel.numberOfLines = 2
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let startButton = UIButton(type: .system)
         startButton.setTitle("Start Test", for: .normal)
+        startButton.titleLabel?.font = UIFont.appFont(ofSize: 20, weight: .bold)
         startButton.setTitleColor(.white, for: .normal)
         startButton.backgroundColor = UIColor(named: "PointColor") ?? UIColor.systemBlue
         startButton.layer.cornerRadius = 10

@@ -14,6 +14,7 @@
 		8B48C16B2DEF4B6C00F4A918 /* Exceptions for "MoodTrip" folder in "MoodTrip" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				.swift,
 				Info.plist,
 				Views/Results/ResultView.swift,
 			);
@@ -29,6 +30,13 @@
 				Views/Results/ResultView.swift,
 			);
 		};
+		8B5F239F2DFEA4F800B10FCC /* Exceptions for "MoodTrip" folder in "Compile Sources" phase from "MoodTrip" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 8B48C1552DEF4B6A00F4A918 /* Sources */;
+			membershipExceptions = (
+				.swift,
+			);
+		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -36,6 +44,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				8B48C16B2DEF4B6C00F4A918 /* Exceptions for "MoodTrip" folder in "MoodTrip" target */,
+				8B5F239F2DFEA4F800B10FCC /* Exceptions for "MoodTrip" folder in "Compile Sources" phase from "MoodTrip" target */,
 				8B48C1A52DEF4D6700F4A918 /* Exceptions for "MoodTrip" folder in "Copy Bundle Resources" phase from "MoodTrip" target */,
 			);
 			path = MoodTrip;

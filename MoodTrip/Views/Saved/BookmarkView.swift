@@ -8,7 +8,7 @@ class BookmarkViewController: UIViewController {
         let label = UILabel()
         label.text = "Saved Items"
         label.textColor = .white
-        label.font = .systemFont(ofSize: 24)
+        label.font = .appFont(ofSize: 24)
         label.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(label)
