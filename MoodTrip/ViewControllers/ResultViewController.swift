@@ -7,55 +7,18 @@ class ResultViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         setupUI()
-        
-        // MARK: - 내비게이션 바 설정 (헤더 배경색 그라데이션 적용)
-        // iOS 13 이상에서 사용 가능한 UINavigationBarAppearance 설정
+
         if #available(iOS 13.0, *) {
             let appearance = UINavigationBarAppearance()
-            appearance.configureWithTransparentBackground() // 투명한 배경으로 시작
-
-            // 그라데이션 이미지 생성
-            let gradientImage = generateGradientImage(startColor: UIColor.black.withAlphaComponent(0.7),
-                                                      endColor: UIColor.clear,
-                                                      size: CGSize(width: UIScreen.main.bounds.width, height: 100)) // 내비게이션 바 높이에 맞춰 조절
-
-            appearance.backgroundImage = gradientImage
-            appearance.shadowImage = UIImage() // 내비게이션 바 하단 그림자 제거 (원한다면)
-
-            // 타이틀 텍스트 색상 설정
+            appearance.configureWithTransparentBackground()
             appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-            // 큰 타이틀 텍스트 색상 설정 (여기서는 prefersLargeTitles가 false이므로 크게 중요하지 않음)
             appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
 
             navigationController?.navigationBar.standardAppearance = appearance
-            navigationController?.navigationBar.scrollEdgeAppearance = appearance // 스크롤 시에도 동일하게 적용
-            
-            // 버튼 아이템 색상 설정
-            navigationController?.navigationBar.tintColor = .white
-            
-        } else {
-            // iOS 13 미만 버전에서는 기존 방식 유지 (투명하게 설정)
-            navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-            navigationController?.navigationBar.shadowImage = UIImage()
-            navigationController?.navigationBar.isTranslucent = true
-            navigationController?.navigationBar.tintColor = .white
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
         }
         
-        // 내비게이션 아이템 설정 (이전과 동일)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.left"),
-            style: .plain,
-            target: self,
-            action: #selector(backTapped)
-        )
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "heart"),
-            style: .plain,
-            target: self,
-            action: #selector(heartTapped)
-        )
-        // prefersLargeTitles는 appearance에서 관리되므로 이 줄은 제거하거나 그대로 두어도 무방
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.tintColor = .white
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -350,6 +313,3 @@ class InfoBoxView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
-
-

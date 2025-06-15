@@ -6,11 +6,14 @@ class SurveyViewController: UIViewController {
     var questions: [(key: String, question: String, options: [(String, Int)])] = []
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .black
-        setupQuestions()
-        showCurrentQuestion()
-    }
+            super.viewDidLoad()
+            view.backgroundColor = .black
+            setupQuestions()
+            showCurrentQuestion()
+            
+            // 네비게이션 바 틴트 컬러를 흰색으로 설정
+            navigationController?.navigationBar.tintColor = .white
+        }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -52,7 +55,7 @@ class SurveyViewController: UIViewController {
         NSLayoutConstraint.activate([
             questionView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             questionView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            questionView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+            questionView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
             questionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5)
         ])
     }
