@@ -1,46 +1,52 @@
 import UIKit
 
-// 이넘을 사용하여 버튼의 타입을 정의합니다.
+// MARK: - 버튼 타입 정의
 enum BottomActionButtonType {
     case map
     case check
 }
 
 class BottomActionButton: UIView {
-
+    
+    // MARK: - 상수
+    private static let cornerRadiusMap: CGFloat = 20.0 // Map 버튼의 코너 래디우스
+    // Check 버튼은 높이의 절반으로 설정되므로 별도 상수 불필요 (layoutSubviews에서 계산)
+    private static let iconSize: CGFloat = 24.0 // 아이콘 크기
+    private static let contentSpacing: CGFloat = 8.0 // 아이콘과 텍스트 사이 간격
+    
+    // MARK: - 프로퍼티
     private let type: BottomActionButtonType
     private let action: (() -> Void)?
-
-    private let blurEffectView: UIVisualEffectView = {
-            let blurEffect = UIBlurEffect(style: .dark) // 블러 스타일을 .dark로 변경
-            let view = UIVisualEffectView(effect: blurEffect)
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.clipsToBounds = true // 블러 뷰도 코너 래디우스에 맞춰 잘리도록 설정
-            return view
-        }()
     
-    // 배경 그라데이션 레이어
+    // MARK: - UI 컴포넌트
+    private let blurEffectView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
+        let view = UIVisualEffectView(effect: blurEffect)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
+        return view
+    }()
+    
     private let backgroundGradientLayer: CAGradientLayer = {
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [
-            UIColor.white.withAlphaComponent(0.1).cgColor, // 상단 0.1 투명도 흰색
-            UIColor.white.withAlphaComponent(0.3).cgColor  // 하단 0.3 투명도 흰색
+            UIColor.white.withAlphaComponent(0.1).cgColor,
+            UIColor.white.withAlphaComponent(0.3).cgColor
         ]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단 시작
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)   // 하단 끝
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         return gradientLayer
     }()
-
-
+    
     private let button: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.titleLabel?.font = .appFont(ofSize: 18, weight: .bold)
         button.setTitleColor(.white, for: .normal)
-        button.clipsToBounds = true // 버튼 자체도 코너 래디우스에 맞춰 잘리도록 설정
+        button.clipsToBounds = true
         return button
     }()
-
+    
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,54 +70,54 @@ class BottomActionButton: UIView {
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(systemName: "checkmark")
         imageView.tintColor = UIColor.white.withAlphaComponent(0.5)
-        imageView.isHidden = true // 초기에는 숨김
+        imageView.isHidden = true
         return imageView
     }()
-
-    // 초기화 메서드
+    
+    // MARK: - 초기화
     init(type: BottomActionButtonType, action: (() -> Void)?) {
         self.type = type
         self.action = action
         super.init(frame: .zero)
         setupView()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    // MARK: - 뷰 설정
     private func setupView() {
-        // 1. 배경에 블러 뷰 추가 (가장 아래)
+        // 블러 뷰 추가 및 제약 조건 설정
         insertSubview(blurEffectView, at: 0)
-        
         NSLayoutConstraint.activate([
             blurEffectView.topAnchor.constraint(equalTo: topAnchor),
             blurEffectView.bottomAnchor.constraint(equalTo: bottomAnchor),
             blurEffectView.leadingAnchor.constraint(equalTo: leadingAnchor),
             blurEffectView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
-
-        // 2. 새로운 배경 그라데이션 레이어 추가 (블러 뷰 바로 위에)
-        layer.insertSublayer(backgroundGradientLayer, at: 1)
-
-        // 3. 보더 그라데이션 설정 (가장 위에)
-        setupBorderGradient()
-
-        // 4. 버튼 추가 (콘텐츠를 담고 투명하게 유지)
-        addSubview(button)
-        button.backgroundColor = .clear // 버튼 자체는 투명하게
         
+        // 배경 그라데이션 레이어 추가
+        layer.insertSublayer(backgroundGradientLayer, at: 1)
+        
+        // 보더 그라데이션 설정
+        setupBorderGradient()
+        
+        // 버튼 추가 및 제약 조건 설정
+        addSubview(button)
+        button.backgroundColor = .clear
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor),
             button.bottomAnchor.constraint(equalTo: bottomAnchor),
             button.leadingAnchor.constraint(equalTo: leadingAnchor),
             button.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
-
+        
         configureButtonContent()
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
+    // MARK: - 보더 그라데이션 설정
     private func setupBorderGradient() {
         let borderGradientLayer = CAGradientLayer()
         borderGradientLayer.colors = [
@@ -122,21 +128,22 @@ class BottomActionButton: UIView {
         borderGradientLayer.locations = [0.0, 0.33, 1.0]
         borderGradientLayer.startPoint = CGPoint(x: 0.2, y: 0.0)
         borderGradientLayer.endPoint = CGPoint(x: 0.4, y: 1.0)
-
+        
         let borderShapeLayer = CAShapeLayer()
         borderShapeLayer.lineWidth = 2
         borderShapeLayer.strokeColor = UIColor.black.cgColor
         borderShapeLayer.fillColor = nil
-
+        
         borderGradientLayer.mask = borderShapeLayer
         layer.addSublayer(borderGradientLayer)
     }
-
+    
+    // MARK: - 버튼 콘텐츠 설정
     private func configureButtonContent() {
         let contentStack = UIStackView()
         contentStack.axis = .horizontal
         contentStack.alignment = .center
-        contentStack.spacing = 8 // 아이콘과 텍스트 사이 간격
+        contentStack.spacing = Self.contentSpacing
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         
         button.addSubview(contentStack)
@@ -145,7 +152,7 @@ class BottomActionButton: UIView {
             contentStack.centerXAnchor.constraint(equalTo: button.centerXAnchor),
             contentStack.centerYAnchor.constraint(equalTo: button.centerYAnchor)
         ])
-
+        
         switch type {
         case .map:
             iconImageView.image = UIImage(systemName: "map.fill")
@@ -154,8 +161,8 @@ class BottomActionButton: UIView {
             contentStack.addArrangedSubview(titleLabel)
             
             NSLayoutConstraint.activate([
-                iconImageView.widthAnchor.constraint(equalToConstant: 24),
-                iconImageView.heightAnchor.constraint(equalToConstant: 24)
+                iconImageView.widthAnchor.constraint(equalToConstant: Self.iconSize),
+                iconImageView.heightAnchor.constraint(equalToConstant: Self.iconSize)
             ])
             
         case .check:
@@ -163,28 +170,28 @@ class BottomActionButton: UIView {
             contentStack.addArrangedSubview(checkmarkImageView)
             
             NSLayoutConstraint.activate([
-                checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
-                checkmarkImageView.heightAnchor.constraint(equalToConstant: 24)
+                checkmarkImageView.widthAnchor.constraint(equalToConstant: Self.iconSize),
+                checkmarkImageView.heightAnchor.constraint(equalToConstant: Self.iconSize)
             ])
         }
     }
-
+    
+    // MARK: - 버튼 탭 액션
     @objc private func buttonTapped() {
         action?()
     }
     
-    // 외부에서 체크마크 상태를 변경할 수 있는 메서드
+    // MARK: - 체크마크 상태 변경
     func setChecked(_ isChecked: Bool) {
         checkmarkImageView.isHidden = !isChecked
         
-        // 체크 상태에 따라 체크마크 색상 변경
+        // 체크 상태에 따라 체크마크 색상 및 애니메이션 변경
         if isChecked {
-            checkmarkImageView.tintColor = .black // 체크시 검은색
+            checkmarkImageView.tintColor = .black
         } else {
-            checkmarkImageView.tintColor = UIColor.white.withAlphaComponent(0.5) // 언체크시 0.5 오퍼시티 흰색
+            checkmarkImageView.tintColor = UIColor.white.withAlphaComponent(0.5)
         }
         
-        // 애니메이션 효과 추가
         UIView.animate(withDuration: 0.2) {
             self.checkmarkImageView.transform = isChecked ? CGAffineTransform(scaleX: 1.1, y: 1.1) : .identity
         } completion: { _ in
@@ -194,31 +201,30 @@ class BottomActionButton: UIView {
         }
     }
     
+    // MARK: - 레이아웃 업데이트
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        // 버튼 타입에 따라 cornerRadius 설정
+        // 뷰의 cornerRadius 설정
         if type == .check {
-            self.layer.cornerRadius = self.bounds.height / 2
+            self.layer.cornerRadius = self.bounds.height / 2 // 원형 버튼
         } else {
-            self.layer.cornerRadius = 14
+            self.layer.cornerRadius = Self.cornerRadiusMap // Map 버튼의 고정된 래디우스
         }
         
-        // 블러 뷰의 cornerRadius도 상위 뷰와 동일하게 설정하여 잘림
+        // 하위 뷰/레이어의 cornerRadius 설정 및 프레임 업데이트
         blurEffectView.layer.cornerRadius = self.layer.cornerRadius
-
-        // 새롭게 추가된 배경 그라데이션 레이어의 프레임과 cornerRadius 업데이트
         backgroundGradientLayer.frame = bounds
         backgroundGradientLayer.cornerRadius = self.layer.cornerRadius
-
+        button.layer.cornerRadius = self.layer.cornerRadius
+        
         // 보더 그라데이션 및 마스크 업데이트
         if let borderGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask != nil }) as? CAGradientLayer,
            let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
             
             borderGradientLayer.frame = bounds
-            borderGradientLayer.cornerRadius = self.layer.cornerRadius // 보더 그라데이션 레이어도 동일한 cornerRadius 적용
+            borderGradientLayer.cornerRadius = self.layer.cornerRadius
             
-            // 보더 경로 업데이트 (둥근 모서리 적용)
             let path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius)
             borderShapeLayer.path = path.cgPath
         }
