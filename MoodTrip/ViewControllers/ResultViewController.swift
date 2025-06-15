@@ -234,11 +234,11 @@ class ResultViewController: UIViewController {
 
             infoRowStack.topAnchor.constraint(equalTo: tagStack.bottomAnchor, constant: 4),
             infoRowStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            infoRowStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            infoRowStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             
             // CircularProgressView의 크기 제약 추가
-            circularProgressView.widthAnchor.constraint(equalToConstant: 120), // 원하는 크기로 설정
-            circularProgressView.heightAnchor.constraint(equalToConstant: 120), // 원하는 크기로 설정
+            circularProgressView.widthAnchor.constraint(equalToConstant: 120),
+            circularProgressView.heightAnchor.constraint(equalToConstant: 120),
 
             infoBox.topAnchor.constraint(equalTo: infoRowStack.bottomAnchor, constant: 12),
             infoBox.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
