@@ -58,6 +58,16 @@ class ResultViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     // 그라데이션 이미지를 생성하는 헬퍼 함수
     private func generateGradientImage(startColor: UIColor, endColor: UIColor, size: CGSize) -> UIImage? {
         let gradientLayer = CAGradientLayer()
