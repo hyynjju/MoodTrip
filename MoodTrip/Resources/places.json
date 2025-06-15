@@ -21,7 +21,7 @@
     "id": 2,
     "name": "Seoul",
     "description": "Vibrant city life with rich culture and food.",
-    "imageURL": "https://media.cnn.com/api/v1/images/stellar/prod/130624120523-jeju-island-beach.jpg?q=x_112,y_0,h_2916,w_5184,c_crop/h_833,w_1480",
+    "imageURL": "https://img.freepik.com/free-photo/south-korea-skyline-seoul-best-view-south-korea-with-lotte-world-mall-namhansanseong-fortress_335224-495.jpg?semt=ais_hybrid&w=740",
     "latitude": 37.5665,
     "longitude": 126.9780,
     "scores": {
@@ -39,7 +39,7 @@
     "id": 3,
     "name": "Busan",
     "description": "A port city with beautiful beaches and seafood.",
-    "imageURL": "https://media.cnn.com/api/v1/images/stellar/prod/130624120523-jeju-island-beach.jpg?q=x_112,y_0,h_2916,w_5184,c_crop/h_833,w_1480",
+    "imageURL": "https://a.travel-assets.com/findyours-php/viewfinder/images/res70/246000/246849-Busan.jpg",
     "latitude": 35.1796,
     "longitude": 129.0756,
     "scores": {
@@ -57,7 +57,7 @@
     "id": 4,
     "name": "Gyeongju",
     "description": "Historical city with ancient temples and tombs.",
-    "imageURL": "https://media.cnn.com/api/v1/images/stellar/prod/130624120523-jeju-island-beach.jpg?q=x_112,y_0,h_2916,w_5184,c_crop/h_833,w_1480",
+    "imageURL": "https://busantourism.co.kr/cdn/shop/products/exploring-gyungju-full-of-unesco-heritage-1-day-tour-232518.jpg?v=1692841664",
     "latitude": 35.8562,
     "longitude": 129.2247,
     "scores": {
@@ -75,7 +75,7 @@
     "id": 5,
     "name": "Incheon",
     "description": "Modern city near the capital with coastal views.",
-    "imageURL": "https://media.cnn.com/api/v1/images/stellar/prod/130624120523-jeju-island-beach.jpg?q=x_112,y_0,h_2916,w_5184,c_crop/h_833,w_1480",
+    "imageURL": "https://img.nmcdn.io/e1/w:1047,h:766,v:1/kpf2024/wp-content/uploads/2015/09/1394_1_000_N861_large-scaled.webp?s=03648359",
     "latitude": 37.4563,
     "longitude": 126.7052,
     "scores": {
