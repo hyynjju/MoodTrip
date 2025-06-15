@@ -1,4 +1,6 @@
+// ResultViewController.swift
 import UIKit
+import MapKit // MapKit 임포트 추가
 
 class ResultViewController: UIViewController {
     var place: Place? // 장소 데이터를 저장하는 속성
@@ -157,7 +159,7 @@ class ResultViewController: UIViewController {
         infoRowStack.distribution = .equalSpacing
         infoRowStack.alignment = .bottom
         infoRowStack.translatesAutoresizingMaskIntoConstraints = false
-
+        
         // MARK: - Info Box View
         let infoBox = InfoBoxView(tripLength: place.recommendedDuration, bestWith: place.bestWith, distance: "12.3 km")
         infoBox.translatesAutoresizingMaskIntoConstraints = false
@@ -177,12 +179,34 @@ class ResultViewController: UIViewController {
         detailInfoLabel.attributedText = attributedString
         detailInfoLabel.numberOfLines = 0
         detailInfoLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        // MARK: - Bottom Action Buttons
+        // "Map" 버튼
+        let mapButton = BottomActionButton(type: .map) { [weak self] in
+            self?.navigateToMap()
+        }
+        mapButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        // "Check" 버튼 (사진의 오른쪽 체크마크 버튼)
+        let checkButton = BottomActionButton(type: .check) { [weak self] in
+            self?.toggleCheckmark()
+        }
+        checkButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        // 두 버튼을 담을 스택 뷰
+        let bottomButtonStack = UIStackView(arrangedSubviews: [mapButton, checkButton])
+        bottomButtonStack.axis = .horizontal
+        bottomButtonStack.spacing = 16 // 버튼 사이 간격
+        bottomButtonStack.distribution = .fillProportionally // 비율에 따라 채움
+        bottomButtonStack.alignment = .center
+        bottomButtonStack.translatesAutoresizingMaskIntoConstraints = false
 
         // MARK: - Add Subviews and Constraints
         view.addSubview(tagStack)
         view.addSubview(infoRowStack)
         view.addSubview(infoBox)
         view.addSubview(detailInfoLabel)
+        view.addSubview(bottomButtonStack) // 하단 버튼 스택 뷰 추가
 
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -222,7 +246,17 @@ class ResultViewController: UIViewController {
 
             detailInfoLabel.topAnchor.constraint(equalTo: infoBox.bottomAnchor, constant: 16),
             detailInfoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            detailInfoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            detailInfoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            // 하단 버튼 스택 뷰 제약 조건
+            bottomButtonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            bottomButtonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            bottomButtonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20), // 하단 safe area에 여백
+            bottomButtonStack.heightAnchor.constraint(equalToConstant: 56), // 버튼 높이
+            
+            // mapButton이 더 넓은 공간을 차지하도록 설정
+            mapButton.widthAnchor.constraint(equalTo: bottomButtonStack.widthAnchor, multiplier: 0.75), // 전체 너비의 75%
+            checkButton.widthAnchor.constraint(equalToConstant: 56) // 체크 버튼은 고정된 너비 (정사각형)
         ])
 
         view.layoutIfNeeded() // 레이아웃 즉시 적용
@@ -242,7 +276,22 @@ class ResultViewController: UIViewController {
     @objc private func heartTapped() {
         print("❤️ 하트 버튼 눌림")
     }
+    
+    // MARK: - Button Actions
+    private func navigateToMap() {
+        guard let place = place else { return }
+        let mapVC = MapViewController()
+        mapVC.place = place // 지도 뷰 컨트롤러에 장소 데이터 전달
+        navigationController?.pushViewController(mapVC, animated: true)
+    }
+    
+    private func toggleCheckmark() {
+        print("다녀온 여행지 체크 토글 (추후 기능 추가 예정)")
+        // 여기에 다녀온 여행지 상태를 업데이트하는 로직을 추가할 수 있습니다.
+        // 예를 들어, CoreData, Realm, UserDefaults 등에 저장하고 버튼의 상태를 업데이트
+    }
 }
+// PaddingLabel과 InfoBoxView 클래스는 그대로 유지
 
 class PaddingLabel: UILabel {
     var padding: UIEdgeInsets // 패딩 값을 저장
