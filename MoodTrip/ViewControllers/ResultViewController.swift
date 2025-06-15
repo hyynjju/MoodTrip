@@ -1,34 +1,35 @@
 import UIKit
 
 class ResultViewController: UIViewController {
-    var place: Place?
+    var place: Place? // 장소 데이터를 저장하는 속성
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
-        setupUI()
+        view.backgroundColor = .black // 뷰 배경색 설정
+        setupUI() // UI 설정 메서드 호출
 
+        // MARK: - Navigation Bar Customization
         if #available(iOS 13.0, *) {
             let appearance = UINavigationBarAppearance()
-            appearance.configureWithTransparentBackground()
-            appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+            appearance.configureWithTransparentBackground() // 투명한 배경 설정
+            appearance.titleTextAttributes = [.foregroundColor: UIColor.white] // 타이틀 색상 흰색
+            appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white] // 라지 타이틀 색상 흰색
 
             navigationController?.navigationBar.standardAppearance = appearance
             navigationController?.navigationBar.scrollEdgeAppearance = appearance
         }
         
-        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.tintColor = .white // 네비게이션 아이템 색상 흰색
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.isHidden = true // 탭바 숨기기
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.tabBarController?.tabBar.isHidden = false
+        self.tabBarController?.tabBar.isHidden = false // 탭바 다시 보이기
     }
     
     // 그라데이션 이미지를 생성하는 헬퍼 함수
@@ -36,8 +37,8 @@ class ResultViewController: UIViewController {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(origin: .zero, size: size)
         gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0) // 하단
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단 시작
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0) // 하단 끝
 
         UIGraphicsBeginImageContext(size)
         gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
@@ -52,16 +53,18 @@ class ResultViewController: UIViewController {
             return
         }
 
+        // MARK: - Background Image & Blur
         let backgroundImageView = UIImageView()
         backgroundImageView.contentMode = .scaleAspectFill
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         backgroundImageView.clipsToBounds = true
         view.addSubview(backgroundImageView)
 
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark)) // 블러 효과 뷰
         blurView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(blurView)
 
+        // 상단 이미지 오버레이 (네비게이션 바가 아님)
         let gradientOverlay = UIView()
         gradientOverlay.translatesAutoresizingMaskIntoConstraints = false
         view.insertSubview(gradientOverlay, aboveSubview: blurView)
@@ -72,12 +75,14 @@ class ResultViewController: UIViewController {
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         gradientOverlay.layer.insertSublayer(gradientLayer, at: 0)
 
+        // 상단 이미지 뷰
         let topImageView = UIImageView()
         topImageView.contentMode = .scaleAspectFill
         topImageView.clipsToBounds = true
         topImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topImageView)
 
+        // 이미지 로딩 및 그라데이션 마스크 적용
         if let url = URL(string: place.imageURL) {
             URLSession.shared.dataTask(with: url) { data, _, _ in
                 if let data = data, let image = UIImage(data: data) {
@@ -85,6 +90,7 @@ class ResultViewController: UIViewController {
                         backgroundImageView.image = image
                         topImageView.image = image
 
+                        // 이미지 하단에 투명 그라데이션 마스크 적용
                         let gradientMask = CAGradientLayer()
                         gradientMask.frame = topImageView.bounds
                         gradientMask.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
@@ -96,6 +102,7 @@ class ResultViewController: UIViewController {
             }.resume()
         }
 
+        // MARK: - Tags Section
         let tagStack = UIStackView()
         tagStack.axis = .horizontal
         tagStack.spacing = 8
@@ -115,14 +122,15 @@ class ResultViewController: UIViewController {
             tagStack.addArrangedSubview(tagLabel)
         }
 
+        // MARK: - Name & Description
         let nameLabel = UILabel()
         nameLabel.text = place.name
         nameLabel.font = .happyFont(ofSize: 48)
         nameLabel.textColor = .white
         nameLabel.numberOfLines = 2
-        nameLabel.adjustsFontSizeToFitWidth = true // 너비에 맞춰 폰트 크기 자동 조절
-        nameLabel.minimumScaleFactor = 0.7 // 최소 폰트 크기 비율 (원래 크기의 70%까지 줄어듦)
-        nameLabel.setContentCompressionResistancePriority(.required, for: .horizontal) // 가로 공간 저항 우선순위 높임
+        nameLabel.adjustsFontSizeToFitWidth = true // 폰트 크기 자동 조절
+        nameLabel.minimumScaleFactor = 0.7 // 최소 폰트 크기 비율
+        nameLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let descriptionLabel = UILabel()
@@ -138,26 +146,23 @@ class ResultViewController: UIViewController {
         nameDescStack.spacing = 4
         nameDescStack.translatesAutoresizingMaskIntoConstraints = false
 
-        // MARK: - 매칭 점수 (CircularProgressView 사용)
-        let circularProgressView = CircularProgressView() // 새 인스턴스 생성
+        // MARK: - Matching Score (CircularProgressView)
+        let circularProgressView = CircularProgressView()
         circularProgressView.translatesAutoresizingMaskIntoConstraints = false
         circularProgressView.score = matchingScore(for: place)
-        circularProgressView.progress = CGFloat(matchingScore(for: place)) / 100.0 // 100점 만점으로 가정
-        // `ResultViewController`의 setupUI 내에서 `circularProgressView`를 서브뷰로 추가
-        // view.addSubview(circularProgressView) // 이미 infoRowStack에 추가되므로 직접 추가할 필요 없음
+        circularProgressView.progress = CGFloat(matchingScore(for: place)) / 100.0 // 0-100점 만점 기준
 
-
-        let infoRowStack = UIStackView(arrangedSubviews: [nameDescStack, circularProgressView]) // matchStack 대신 circularProgressView 사용
+        let infoRowStack = UIStackView(arrangedSubviews: [nameDescStack, circularProgressView])
         infoRowStack.axis = .horizontal
         infoRowStack.distribution = .equalSpacing
         infoRowStack.alignment = .bottom
         infoRowStack.translatesAutoresizingMaskIntoConstraints = false
 
-
+        // MARK: - Info Box View
         let infoBox = InfoBoxView(tripLength: place.recommendedDuration, bestWith: place.bestWith, distance: "12.3 km")
         infoBox.translatesAutoresizingMaskIntoConstraints = false
 
-        // MARK: - 상세 정보 (타이틀 변경 및 섹션 분리)
+        // MARK: - Detailed Info Section
         let detailInfoLabel = UILabel()
         let attributedString = NSMutableAttributedString()
         
@@ -173,6 +178,7 @@ class ResultViewController: UIViewController {
         detailInfoLabel.numberOfLines = 0
         detailInfoLabel.translatesAutoresizingMaskIntoConstraints = false
 
+        // MARK: - Add Subviews and Constraints
         view.addSubview(tagStack)
         view.addSubview(infoRowStack)
         view.addSubview(infoBox)
@@ -189,7 +195,6 @@ class ResultViewController: UIViewController {
             blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            // 이 gradientOverlay는 내비게이션 바가 아닌 이미지 위에 있는 오버레이입니다.
             gradientOverlay.topAnchor.constraint(equalTo: view.topAnchor),
             gradientOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             gradientOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -207,7 +212,7 @@ class ResultViewController: UIViewController {
             infoRowStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             infoRowStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             
-            // CircularProgressView의 크기 제약 추가
+            // CircularProgressView 크기 제약
             circularProgressView.widthAnchor.constraint(equalToConstant: 120),
             circularProgressView.heightAnchor.constraint(equalToConstant: 120),
 
@@ -220,13 +225,13 @@ class ResultViewController: UIViewController {
             detailInfoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
 
-        view.layoutIfNeeded()
-        gradientLayer.frame = gradientOverlay.bounds
+        view.layoutIfNeeded() // 레이아웃 즉시 적용
+        gradientLayer.frame = gradientOverlay.bounds // 그라데이션 레이어 프레임 설정
     }
 
     private func matchingScore(for place: Place) -> Int {
         let total = place.scores.values.reduce(0, +)
-        guard place.scores.count > 0 else { return 0 } // 0으로 나누는 오류 방지
+        guard place.scores.count > 0 else { return 0 } // 0으로 나누기 방지
         return total / place.scores.count
     }
 
@@ -240,7 +245,7 @@ class ResultViewController: UIViewController {
 }
 
 class PaddingLabel: UILabel {
-    var padding: UIEdgeInsets
+    var padding: UIEdgeInsets // 패딩 값을 저장
 
     init(padding: UIEdgeInsets) {
         self.padding = padding
@@ -253,13 +258,13 @@ class PaddingLabel: UILabel {
     }
 
     override func drawText(in rect: CGRect) {
-        super.drawText(in: rect.inset(by: padding))
+        super.drawText(in: rect.inset(by: padding)) // 패딩 적용하여 텍스트 그리기
     }
 
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
         return CGSize(width: size.width + padding.left + padding.right,
-                      height: size.height + padding.top + padding.bottom)
+                      height: size.height + padding.top + padding.bottom) // 패딩 포함한 고유 크기 반환
     }
 }
 
@@ -269,14 +274,14 @@ class InfoBoxView: UIView {
         layer.cornerRadius = 20
         clipsToBounds = true
 
-        // 기존 배경 그라데이션 레이어 추가
+        // MARK: - 배경 그라데이션 레이어
         let backgroundGradientLayer = CAGradientLayer()
         backgroundGradientLayer.colors = [UIColor.white.withAlphaComponent(0.06).cgColor, UIColor.white.withAlphaComponent(0.2).cgColor]
         backgroundGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단
         backgroundGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0) // 하단
         layer.insertSublayer(backgroundGradientLayer, at: 0) // 가장 아래 레이어로 삽입
 
-        // MARK: - 변경 사항 시작: 흰색 그라데이션 보더 레이어 추가
+        // MARK: - 보더 그라데이션 레이어
         let borderGradientLayer = CAGradientLayer()
         borderGradientLayer.colors = [
             UIColor.white.withAlphaComponent(0.35).cgColor,
@@ -287,18 +292,17 @@ class InfoBoxView: UIView {
         borderGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단
         borderGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0) // 하단
 
-        // 보더 역할을 할 CAShapeLayer 생성
+        // 보더 형태를 위한 CAShapeLayer (마스크로 사용)
         let borderShapeLayer = CAShapeLayer()
-        borderShapeLayer.lineWidth = 2 // 두께 2px
-        borderShapeLayer.strokeColor = UIColor.black.cgColor // 임시 색상, 마스크로 사용될 것이므로 실제 색상은 중요하지 않음
-        borderShapeLayer.fillColor = nil // 내부를 채우지 않음
+        borderShapeLayer.lineWidth = 2 // 보더 두께
+        borderShapeLayer.strokeColor = UIColor.black.cgColor // 실제 색상은 마스크이므로 중요하지 않음
+        borderShapeLayer.fillColor = nil // 내부 채우지 않음
 
-        // borderGradientLayer의 마스크로 borderShapeLayer 설정
-        borderGradientLayer.mask = borderShapeLayer
+        borderGradientLayer.mask = borderShapeLayer // 그라데이션 레이어의 마스크로 설정
         
         layer.addSublayer(borderGradientLayer) // 뷰의 레이어에 보더 그라데이션 레이어 추가
-        // MARK: - 변경 사항 끝
 
+        // MARK: - 콘텐츠 스택 뷰
         let labels = [("Trip Length", tripLength), ("Best With", bestWith), ("Distance", distance)]
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -348,17 +352,15 @@ class InfoBoxView: UIView {
             backgroundGradientLayer.frame = bounds
         }
         
-        // MARK: - 변경 사항 시작: 보더 그라데이션 레이어 및 마스크 업데이트
+        // MARK: - 보더 그라데이션 및 마스크 업데이트
         if let borderGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask != nil }) as? CAGradientLayer,
            let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
             
-            // 보더 그라데이션 레이어의 프레임은 뷰의 bounds와 동일하게 설정
-            borderGradientLayer.frame = bounds
+            borderGradientLayer.frame = bounds // 보더 그라데이션 레이어 프레임 설정
 
-            // 보더 경로 업데이트
+            // 보더 경로 업데이트 (둥근 모서리 적용)
             let path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius)
             borderShapeLayer.path = path.cgPath
         }
-        // MARK: - 변경 사항 끝
     }
 }
