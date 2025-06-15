@@ -253,7 +253,7 @@ class ResultViewController: UIViewController {
             // 하단 버튼 스택 뷰 제약 조건
             bottomButtonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             bottomButtonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            bottomButtonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            bottomButtonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
             bottomButtonStack.heightAnchor.constraint(equalToConstant: Self.buttonHeight), // 상수 사용
             
             // 오른쪽 체크 버튼은 무조건 정원형 (높이에 맞춰 너비도 설정)
@@ -295,8 +295,10 @@ class ResultViewController: UIViewController {
     
     private func toggleCheckmark() {
         print("다녀온 여행지 체크 토글 (추후 기능 추가 예정)")
-        // 여기에 다녀온 여행지 상태를 업데이트하는 로직을 추가할 수 있습니다.
-        // 예를 들어, CoreData, Realm, UserDefaults 등에 저장하고 버튼의 상태를 업데이트
+        if let checkButton = (self.view.subviews.compactMap { $0 as? UIStackView }.first?.arrangedSubviews.last as? BottomActionButton) {
+            
+            checkButton.setChecked(true)
+        }
     }
 }
 

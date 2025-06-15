@@ -17,6 +17,7 @@ class BottomActionButton: UIView {
     // MARK: - 프로퍼티
     private let type: BottomActionButtonType
     private let action: (() -> Void)?
+    private var isChecked: Bool = false
     
     // MARK: - UI 컴포넌트
     private let blurEffectView: UIVisualEffectView = {
@@ -35,6 +36,18 @@ class BottomActionButton: UIView {
         ]
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        return gradientLayer
+    }()
+    
+    private let checkedBackgroundGradientLayer: CAGradientLayer = {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor(red: 0x73/255.0, green: 0xC2/255.0, blue: 0xFF/255.0, alpha: 0.7).cgColor,
+            UIColor(red: 0x73/255.0, green: 0xC2/255.0, blue: 0xFF/255.0, alpha: 1.0).cgColor
+        ]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        gradientLayer.isHidden = true
         return gradientLayer
     }()
     
@@ -70,7 +83,7 @@ class BottomActionButton: UIView {
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(systemName: "checkmark")
         imageView.tintColor = UIColor.white.withAlphaComponent(0.5)
-        imageView.isHidden = true
+        imageView.isHidden = false
         return imageView
     }()
     
@@ -99,6 +112,7 @@ class BottomActionButton: UIView {
         
         // 배경 그라데이션 레이어 추가
         layer.insertSublayer(backgroundGradientLayer, at: 1)
+        layer.insertSublayer(checkedBackgroundGradientLayer, at: 2)
         
         // 보더 그라데이션 설정
         setupBorderGradient()
@@ -183,9 +197,17 @@ class BottomActionButton: UIView {
     
     // MARK: - 체크마크 상태 변경
     func setChecked(_ isChecked: Bool) {
+        self.isChecked = isChecked
         checkmarkImageView.isHidden = !isChecked
         
-        // 체크 상태에 따라 체크마크 색상 및 애니메이션 변경
+        // 체크 상태에 따라 배경 그라데이션 변경
+        if type == .check {
+            blurEffectView.isHidden = isChecked
+            backgroundGradientLayer.isHidden = isChecked
+            checkedBackgroundGradientLayer.isHidden = !isChecked
+        }
+        
+        // 체크 상태에 따라 체크마크 색상 변경
         if isChecked {
             checkmarkImageView.tintColor = .black
         } else {
@@ -216,6 +238,8 @@ class BottomActionButton: UIView {
         blurEffectView.layer.cornerRadius = self.layer.cornerRadius
         backgroundGradientLayer.frame = bounds
         backgroundGradientLayer.cornerRadius = self.layer.cornerRadius
+        checkedBackgroundGradientLayer.frame = bounds
+        checkedBackgroundGradientLayer.cornerRadius = self.layer.cornerRadius
         button.layer.cornerRadius = self.layer.cornerRadius
         
         // 보더 그라데이션 및 마스크 업데이트
