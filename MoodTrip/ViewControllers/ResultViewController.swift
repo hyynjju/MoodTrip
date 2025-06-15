@@ -62,8 +62,6 @@ class ResultViewController: UIViewController {
         blurView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(blurView)
 
-        // 이 gradientOverlay는 이제 내비게이션 바 그라데이션과는 별개입니다.
-        // 기존 코드의 그라데이션 오버레이는 이미지 위에 있는 그라데이션이므로 유지합니다.
         let gradientOverlay = UIView()
         gradientOverlay.translatesAutoresizingMaskIntoConstraints = false
         view.insertSubview(gradientOverlay, aboveSubview: blurView)
@@ -129,7 +127,7 @@ class ResultViewController: UIViewController {
 
         let descriptionLabel = UILabel()
         descriptionLabel.text = place.description
-        descriptionLabel.font = .appFont(ofSize: 18)
+        descriptionLabel.font = .appFont(ofSize: 16)
         descriptionLabel.textColor = .white
         descriptionLabel.numberOfLines = 3
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -268,9 +266,38 @@ class PaddingLabel: UILabel {
 class InfoBoxView: UIView {
     init(tripLength: String, bestWith: String, distance: String) {
         super.init(frame: .zero)
-        backgroundColor = UIColor.white.withAlphaComponent(0.15)
         layer.cornerRadius = 20
         clipsToBounds = true
+
+        // 기존 배경 그라데이션 레이어 추가
+        let backgroundGradientLayer = CAGradientLayer()
+        backgroundGradientLayer.colors = [UIColor.white.withAlphaComponent(0.06).cgColor, UIColor.white.withAlphaComponent(0.2).cgColor]
+        backgroundGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단
+        backgroundGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0) // 하단
+        layer.insertSublayer(backgroundGradientLayer, at: 0) // 가장 아래 레이어로 삽입
+
+        // MARK: - 변경 사항 시작: 흰색 그라데이션 보더 레이어 추가
+        let borderGradientLayer = CAGradientLayer()
+        borderGradientLayer.colors = [
+            UIColor.white.withAlphaComponent(0.35).cgColor,
+            UIColor.white.withAlphaComponent(0.35).cgColor, // 33% 지점까지 0.35 유지
+            UIColor.white.withAlphaComponent(0.1).cgColor   // 33%부터 0.1로
+        ]
+        borderGradientLayer.locations = [0.0, 0.33, 1.0] // 색상 위치 설정
+        borderGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0) // 상단
+        borderGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0) // 하단
+
+        // 보더 역할을 할 CAShapeLayer 생성
+        let borderShapeLayer = CAShapeLayer()
+        borderShapeLayer.lineWidth = 2 // 두께 2px
+        borderShapeLayer.strokeColor = UIColor.black.cgColor // 임시 색상, 마스크로 사용될 것이므로 실제 색상은 중요하지 않음
+        borderShapeLayer.fillColor = nil // 내부를 채우지 않음
+
+        // borderGradientLayer의 마스크로 borderShapeLayer 설정
+        borderGradientLayer.mask = borderShapeLayer
+        
+        layer.addSublayer(borderGradientLayer) // 뷰의 레이어에 보더 그라데이션 레이어 추가
+        // MARK: - 변경 사항 끝
 
         let labels = [("Trip Length", tripLength), ("Best With", bestWith), ("Distance", distance)]
         let stack = UIStackView()
@@ -284,13 +311,13 @@ class InfoBoxView: UIView {
             titleLabel.text = title
             titleLabel.font = .appFont(ofSize: 14)
             titleLabel.textColor = .white.withAlphaComponent(0.7)
-            titleLabel.textAlignment = .center // 추가: 텍스트 중앙 정렬
+            titleLabel.textAlignment = .center
 
             let valueLabel = UILabel()
             valueLabel.text = value
             valueLabel.font = .appFont(ofSize: 18, weight: .bold)
             valueLabel.textColor = .white
-            valueLabel.textAlignment = .center // 추가: 텍스트 중앙 정렬
+            valueLabel.textAlignment = .center
 
             let verticalStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
             verticalStack.axis = .vertical
@@ -311,5 +338,27 @@ class InfoBoxView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // 배경 그라데이션 레이어 프레임 업데이트
+        if let backgroundGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask == nil }) {
+            backgroundGradientLayer.frame = bounds
+        }
+        
+        // MARK: - 변경 사항 시작: 보더 그라데이션 레이어 및 마스크 업데이트
+        if let borderGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask != nil }) as? CAGradientLayer,
+           let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
+            
+            // 보더 그라데이션 레이어의 프레임은 뷰의 bounds와 동일하게 설정
+            borderGradientLayer.frame = bounds
+
+            // 보더 경로 업데이트
+            let path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius)
+            borderShapeLayer.path = path.cgPath
+        }
+        // MARK: - 변경 사항 끝
     }
 }
