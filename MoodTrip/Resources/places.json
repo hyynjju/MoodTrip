@@ -10,7 +10,12 @@
       "calm": 90,
       "family": 80,
       "nature": 95
-    }
+    },
+    "tags": ["nature", "beach"],
+    "recommendedDuration": "3 days 2 nights",
+    "bestWith": "Family",
+    "address": "Jeju Island, Jeju Province, South Korea",
+    "detailedDescription": "Jeju Island is a volcanic island with breathtaking landscapes, pristine beaches, and lush forests. It is a popular destination for both adventure seekers and those looking to relax. Visitors can enjoy hiking Hallasan, exploring lava tubes, and tasting local seafood. The island also offers cultural experiences like traditional villages and museums. Jeju's slow pace and natural beauty make it ideal for family vacations and nature lovers."
   },
   {
     "id": 2,
@@ -23,7 +28,12 @@
       "calm": 50,
       "family": 70,
       "nature": 30
-    }
+    },
+    "tags": ["city", "culture"],
+    "recommendedDuration": "2 days 1 night",
+    "bestWith": "Friends",
+    "address": "Seoul, South Korea",
+    "detailedDescription": "Seoul is the dynamic capital of South Korea, offering a perfect blend of modern skyscrapers and historical palaces. The city is known for its vibrant nightlife, shopping districts, and diverse street food. Tourists can explore ancient palaces, enjoy K-pop performances, and relax in Han River parks. It is ideal for friends looking for excitement, culture, and endless exploration in an urban setting."
   },
   {
     "id": 3,
@@ -36,7 +46,12 @@
       "calm": 70,
       "family": 60,
       "nature": 80
-    }
+    },
+    "tags": ["beach", "seafood"],
+    "recommendedDuration": "2 days 1 night",
+    "bestWith": "Couple",
+    "address": "Busan, South Korea",
+    "detailedDescription": "Busan is a coastal city famous for its sandy beaches, seafood markets, and relaxed atmosphere. Visitors can enjoy Haeundae and Gwangalli beaches, fresh seafood at Jagalchi Market, and scenic hikes along coastal trails. The city offers a romantic vibe for couples, as well as vibrant night scenes and cultural landmarks like temples and museums."
   },
   {
     "id": 4,
@@ -49,7 +64,12 @@
       "calm": 80,
       "family": 90,
       "nature": 70
-    }
+    },
+    "tags": ["history", "temple"],
+    "recommendedDuration": "Day trip",
+    "bestWith": "Family",
+    "address": "Gyeongju, North Gyeongsang Province, South Korea",
+    "detailedDescription": "Gyeongju is often referred to as a 'museum without walls' due to its rich historical heritage. It was once the capital of the ancient Silla Kingdom, and visitors can explore Bulguksa Temple, Seokguram Grotto, and ancient burial mounds. It is perfect for educational family trips and those interested in Korean history and architecture."
   },
   {
     "id": 5,
@@ -62,6 +82,11 @@
       "calm": 60,
       "family": 50,
       "nature": 40
-    }
+    },
+    "tags": ["modern", "harbor"],
+    "recommendedDuration": "Day trip",
+    "bestWith": "Solo",
+    "address": "Incheon, South Korea",
+    "detailedDescription": "Incheon is a gateway city located west of Seoul, known for its international airport and coastal charm. The city blends modern infrastructure with coastal attractions like Songdo Central Park and Wolmido Island. It’s a great choice for solo travelers looking for a quick getaway, harbor views, and a taste of Korea’s city life outside Seoul."
   }
 ]
