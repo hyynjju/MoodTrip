@@ -1,4 +1,3 @@
-// ResultViewController.swift
 import UIKit
 import MapKit // MapKit 임포트 추가
 
@@ -196,8 +195,8 @@ class ResultViewController: UIViewController {
         // 두 버튼을 담을 스택 뷰
         let bottomButtonStack = UIStackView(arrangedSubviews: [mapButton, checkButton])
         bottomButtonStack.axis = .horizontal
-        bottomButtonStack.spacing = 16 // 버튼 사이 간격
-        bottomButtonStack.distribution = .fillProportionally // 비율에 따라 채움
+        bottomButtonStack.spacing = 8 // 버튼 사이 간격 8픽셀
+        bottomButtonStack.distribution = .fillProportionally // 비율에 따라 채움 (여기서는 왼쪽 버튼이 남은 공간 채움)
         bottomButtonStack.alignment = .center
         bottomButtonStack.translatesAutoresizingMaskIntoConstraints = false
 
@@ -251,12 +250,15 @@ class ResultViewController: UIViewController {
             // 하단 버튼 스택 뷰 제약 조건
             bottomButtonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             bottomButtonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            bottomButtonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20), // 하단 safe area에 여백
-            bottomButtonStack.heightAnchor.constraint(equalToConstant: 56), // 버튼 높이
+            bottomButtonStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            bottomButtonStack.heightAnchor.constraint(equalToConstant: 56), // 버튼 높이는 56으로 고정
+
+            // 오른쪽 체크 버튼은 무조건 정원형 (높이 56에 맞춰 너비도 56)
+            checkButton.widthAnchor.constraint(equalToConstant: 56),
             
-            // mapButton이 더 넓은 공간을 차지하도록 설정
-            mapButton.widthAnchor.constraint(equalTo: bottomButtonStack.widthAnchor, multiplier: 0.75), // 전체 너비의 75%
-            checkButton.widthAnchor.constraint(equalToConstant: 56) // 체크 버튼은 고정된 너비 (정사각형)
+            // 왼쪽 맵 버튼의 높이는 오른쪽 체크 버튼과 같게 (bottomButtonStack의 높이에 맞춰짐)
+            // 왼쪽 맵 버튼의 너비는 남은 공간을 모두 차지하도록 설정
+            mapButton.widthAnchor.constraint(equalTo: bottomButtonStack.widthAnchor, multiplier: 1.0, constant: -56 - 8), // 전체 스택 너비 - 체크버튼 너비 - 간격
         ])
 
         view.layoutIfNeeded() // 레이아웃 즉시 적용
@@ -291,8 +293,8 @@ class ResultViewController: UIViewController {
         // 예를 들어, CoreData, Realm, UserDefaults 등에 저장하고 버튼의 상태를 업데이트
     }
 }
-// PaddingLabel과 InfoBoxView 클래스는 그대로 유지
 
+// PaddingLabel 클래스
 class PaddingLabel: UILabel {
     var padding: UIEdgeInsets // 패딩 값을 저장
 
@@ -317,6 +319,7 @@ class PaddingLabel: UILabel {
     }
 }
 
+// InfoBoxView 클래스
 class InfoBoxView: UIView {
     init(tripLength: String, bestWith: String, distance: String) {
         super.init(frame: .zero)
