@@ -313,8 +313,7 @@ class ResultViewController: UIViewController {
             topImageView.topAnchor.constraint(equalTo: view.topAnchor),
             topImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            // ⭐️ 수정: topImageView 높이 240
-            topImageView.heightAnchor.constraint(equalToConstant: 240),
+            topImageView.heightAnchor.constraint(equalToConstant: 320),
             
             // 스크롤 뷰 제약 조건:
             scrollView.topAnchor.constraint(equalTo: topImageView.bottomAnchor, constant: -70),
@@ -369,7 +368,7 @@ class ResultViewController: UIViewController {
             recommendedPlacesTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             recommendedPlacesTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // ⭐️ 추천 캐러셀 컬렉션 뷰 제약 조건
+            // ⭐️ 추천 캐러셀 컬렉션 뷰 제약 조건 (constant -10으로 변경)
             recommendationsCollectionView.topAnchor.constraint(equalTo: recommendedPlacesTitleLabel.bottomAnchor, constant: -10),
             recommendationsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             recommendationsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -401,14 +400,24 @@ class ResultViewController: UIViewController {
         view.bringSubviewToFront(bottomButtonStack)
     }
     
-    // ⭐️ 수정: userScores를 활용하여 매칭 점수를 계산하는 함수
+    // ⭐️ 수정: userScores를 활용하여 매칭 점수를 계산하고 100점 만점으로 정규화하는 함수
     private func calculateMatchingScore(for place: Place) -> Int {
-        var score = 0
+        var rawScore = 0
+        let numberOfCategories = userScores.count // 설문 질문 항목의 수
+        
+        // 질문 항목이 없으면 0점 반환 (0으로 나누는 오류 방지)
+        guard numberOfCategories > 0 else { return 0 }
+        
         for (key, userScore) in userScores {
             let placeScore = place.scores[key] ?? 0
-            score += 100 - abs(userScore - placeScore)
+            rawScore += 100 - abs(userScore - placeScore)
         }
-        return score
+        
+        // 100점 만점으로 정규화
+        let maxPossibleRawScore = numberOfCategories * 100
+        let normalizedScore = (Double(rawScore) / Double(maxPossibleRawScore)) * 100.0
+        
+        return Int(round(normalizedScore)) // 소수점 반올림
     }
     
     @objc private func backTapped() {
