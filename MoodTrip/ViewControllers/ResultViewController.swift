@@ -17,6 +17,16 @@ class ResultViewController: UIViewController {
     // ⭐️ 추가: 추천 캐러셀을 위한 UICollectionView
     private var recommendationsCollectionView: UICollectionView!
     
+    // ⭐️ 추가: topImageView와 그 높이 제약 조건
+    private let topImageView = UIImageView()
+    private var topImageViewHeightConstraint: NSLayoutConstraint!
+    private let topImageViewGradientMask = CAGradientLayer() // ⭐️ 그라데이션 마스크를 프로퍼티로 선언
+    
+    // MARK: - Constants for animation
+    private let maxTopImageViewHeight: CGFloat = 320 // 초기 높이
+    private let minTopImageViewHeight: CGFloat = 120 // 최소 높이
+    private let scrollOffsetToFade: CGFloat = 100 // 이미지가 완전히 사라지는 스크롤 오프셋
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
@@ -43,7 +53,7 @@ class ResultViewController: UIViewController {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
@@ -102,27 +112,27 @@ class ResultViewController: UIViewController {
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         gradientOverlay.layer.insertSublayer(gradientLayer, at: 0)
         
-        let topImageView = UIImageView()
+        // topImageView 설정
         topImageView.contentMode = .scaleAspectFill
         topImageView.clipsToBounds = true
-        // ⭐️ 수정: topImageView 모서리 둥글게
         topImageView.layer.cornerRadius = 12 // 원하는 radius 값 설정
         topImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topImageView)
+        
+        // ⭐️ topImageView 그라데이션 마스크 초기 설정
+        topImageViewGradientMask.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
+        topImageViewGradientMask.startPoint = CGPoint(x: 0.5, y: 0.7)
+        topImageViewGradientMask.endPoint = CGPoint(x: 0.5, y: 1.0)
+        topImageView.layer.mask = topImageViewGradientMask
         
         if let url = URL(string: place.imageURL) {
             URLSession.shared.dataTask(with: url) { data, _, _ in
                 if let data = data, let image = UIImage(data: data) {
                     DispatchQueue.main.async {
                         backgroundImageView.image = image
-                        topImageView.image = image
-                        
-                        let gradientMask = CAGradientLayer()
-                        gradientMask.frame = topImageView.bounds
-                        gradientMask.colors = [UIColor.white.cgColor, UIColor.clear.cgColor]
-                        gradientMask.startPoint = CGPoint(x: 0.5, y: 0.7)
-                        gradientMask.endPoint = CGPoint(x: 0.5, y: 1.0)
-                        topImageView.layer.mask = gradientMask
+                        self.topImageView.image = image // self.topImageView로 변경
+                        // ⭐️ 초기 그라데이션 마스크 프레임 설정
+                        self.topImageViewGradientMask.frame = self.topImageView.bounds
                     }
                 }
             }.resume()
@@ -130,6 +140,7 @@ class ResultViewController: UIViewController {
         
         // MARK: - ScrollView Setup
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.delegate = self // ⭐️ delegate 설정
         view.addSubview(scrollView)
         
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -290,6 +301,9 @@ class ResultViewController: UIViewController {
         
         view.addSubview(bottomButtonStack)
         
+        // ⭐️ topImageViewHeightConstraint 초기화
+        topImageViewHeightConstraint = topImageView.heightAnchor.constraint(equalToConstant: maxTopImageViewHeight)
+
         NSLayoutConstraint.activate([
             // 배경 이미지 (기존과 동일)
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -313,7 +327,7 @@ class ResultViewController: UIViewController {
             topImageView.topAnchor.constraint(equalTo: view.topAnchor),
             topImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topImageView.heightAnchor.constraint(equalToConstant: 320),
+            topImageViewHeightConstraint, // ⭐️ 동적으로 변경될 높이 제약 조건
             
             // 스크롤 뷰 제약 조건:
             scrollView.topAnchor.constraint(equalTo: topImageView.bottomAnchor, constant: -70),
@@ -475,6 +489,32 @@ extension ResultViewController: UICollectionViewDelegate {
     }
 }
 
+// MARK: - UIScrollViewDelegate
+extension ResultViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffsetY = scrollView.contentOffset.y
+        
+        // Calculate new height for topImageView
+        let newHeight = maxTopImageViewHeight - contentOffsetY
+        
+        // Clamp the height between min and max values
+        let clampedHeight = max(minTopImageViewHeight, min(maxTopImageViewHeight, newHeight))
+        topImageViewHeightConstraint.constant = clampedHeight
+        
+        // ⭐️ Update the gradient mask frame
+        // This ensures the gradient mask scales with the image view
+        topImageViewGradientMask.frame = topImageView.bounds
+        
+        // ⭐️ Adjust alpha of topImageView
+        // Calculate the progress of fading based on scrollOffsetToFade
+        let alphaProgress = min(1.0, max(0.0, contentOffsetY / scrollOffsetToFade))
+        topImageView.alpha = 1.0 - alphaProgress
+        
+        // Optional: If you want the backgroundImageView to also have a subtle fade or blur change
+        // For now, let's keep it simple and just focus on topImageView.
+    }
+}
+
 // PaddingLabel 클래스 (변경 없음)
 class PaddingLabel: UILabel {
     var padding: UIEdgeInsets
@@ -581,7 +621,7 @@ class InfoBoxView: UIView {
         }
         
         if let borderGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask != nil }) as? CAGradientLayer,
-           let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
+            let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
             
             borderGradientLayer.frame = bounds
             
