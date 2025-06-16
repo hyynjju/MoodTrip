@@ -2,26 +2,37 @@ import UIKit
 import AVFoundation
 
 class MainViewController: UIViewController {
-
+    
     var player: AVPlayer?
     var playerLayer: AVPlayerLayer?
     
-    // 비디오 재생이 끝났다는 알림을 관찰할 옵저버를 저장하기 위한 프로퍼티
     private var playerDidFinishObserver: Any?
-
+    
+    // 비디오 상단에 추가할 그라데이션 레이어
+    private let videoGradientOverlay = CAGradientLayer()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
-
+        view.backgroundColor = .black // 전체 배경은 검정
+        
         setupBackgroundVideo()
         setupUI()
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        playerLayer?.frame = view.bounds
+        
+        // 1. 비디오 플레이어 레이어 프레임 업데이트
+        // 비디오가 배경 상단 0%~70% 부분을 채움
+        playerLayer?.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height * 0.7)
+        
+        // 2. 비디오 그라데이션 오버레이 프레임 및 속성 업데이트
+        videoGradientOverlay.frame = playerLayer?.frame ?? .zero // 비디오 레이어와 같은 사이즈
+        // 0~50% 위치는 오퍼시티 0, 50%~100% 위치는 오퍼시티 0~1로 진해지는 검정 그라데이션
+        videoGradientOverlay.colors = [UIColor.black.withAlphaComponent(0.0).cgColor, UIColor.black.withAlphaComponent(0.0).cgColor, UIColor.black.withAlphaComponent(1.0).cgColor]
+        videoGradientOverlay.locations = [0.0, 0.5, 1.0] // 0%~50%는 투명, 50%~100%는 진해지도록
     }
-
+    
     // MARK: - Video Background Setup
     private func setupBackgroundVideo() {
         guard let path = Bundle.main.path(forResource: "sky", ofType: "mp4") else {
@@ -29,87 +40,106 @@ class MainViewController: UIViewController {
             return
         }
         let videoURL = URL(fileURLWithPath: path)
-
+        
         player = AVPlayer(url: videoURL)
-        // AVPlayer.ActionAtItemEnd.loop 대신 .none을 사용하고, 반복 재생은 알림으로 처리
-        player?.actionAtItemEnd = .none // 비디오 끝에서 특별한 동작을 하지 않음 (기본값)
-
+        player?.actionAtItemEnd = .none // 비디오 끝에서 특별한 동작을 하지 않음
+        
         playerLayer = AVPlayerLayer(player: player)
         playerLayer?.videoGravity = .resizeAspectFill
-        playerLayer?.frame = view.bounds
-
+        
         if let playerLayer = playerLayer {
-            view.layer.insertSublayer(playerLayer, at: 0)
+            view.layer.insertSublayer(playerLayer, at: 0) // 비디오 레이어를 가장 아래에 추가
         }
-
+        
         player?.play()
-
-        // 비디오 위에 어둡게 오버레이
-        let overlayView = UIView()
-        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        overlayView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(overlayView)
-
-        NSLayoutConstraint.activate([
-            overlayView.topAnchor.constraint(equalTo: view.topAnchor),
-            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-
-        // 비디오 재생이 끝났을 때 알림을 받을 옵저버 추가
+        
+        // 비디오 그라데이션 오버레이 추가 (비디오 레이어 바로 위에)
+        if let playerLayer = playerLayer {
+            view.layer.insertSublayer(videoGradientOverlay, above: playerLayer)
+        }
+        
         playerDidFinishObserver = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime, // 비디오 아이템 재생이 끝났을 때 발생하는 알림
-            object: player?.currentItem,           // 현재 플레이어 아이템이 해당 알림을 보낼 때만
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: player?.currentItem,
             queue: .main) { [weak self] _ in
-                // 비디오를 처음으로 되감기
                 self?.player?.seek(to: CMTime.zero)
-                // 다시 재생
                 self?.player?.play()
             }
-
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleVideoPlayPause))
         view.addGestureRecognizer(tapGesture)
     }
-
-    // MARK: - UI Setup (기존 코드)
+    
+    // MARK: - UI Setup
     private func setupUI() {
-        let titleLabel = UILabel()
-        titleLabel.text = "Hello,\nlet's find your place"
-        titleLabel.textColor = .white
-        titleLabel.font = .happyFont(ofSize: 28)
-        titleLabel.numberOfLines = 2
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        let startButton = UIButton(type: .system)
-        startButton.setTitle("Start Test", for: .normal)
-        startButton.titleLabel?.font = UIFont.appFont(ofSize: 20, weight: .bold)
-        startButton.setTitleColor(.white, for: .normal)
-        startButton.backgroundColor = UIColor(named: "PointColor") ?? UIColor.systemBlue
-        startButton.layer.cornerRadius = 10
-        startButton.translatesAutoresizingMaskIntoConstraints = false
-        startButton.addTarget(self, action: #selector(startSurvey), for: .touchUpInside)
-
-        view.addSubview(titleLabel)
-        view.addSubview(startButton)
-
+        // "Hello, let's find your place" 레이블
+        let mainTitleLabel = UILabel()
+        mainTitleLabel.text = "Hello,\nlet's find your place"
+        mainTitleLabel.textColor = .white
+        mainTitleLabel.font = .appFont(ofSize: 34, weight: .bold) // 스크린샷과 유사하게 크기 조절
+        mainTitleLabel.numberOfLines = 2
+        mainTitleLabel.textAlignment = .center
+        mainTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(mainTitleLabel)
+        
+        // "Text text content Text text content." 레이블 (내용)
+        let contentLabel = UILabel()
+        contentLabel.text = "Answer quick questions to find your perfect match." // 요청하신 문구
+        contentLabel.textColor = .white.withAlphaComponent(0.8)
+        contentLabel.font = .appFont(ofSize: 18, weight: .regular) // 폰트 크기 조절
+        contentLabel.numberOfLines = 0
+        contentLabel.textAlignment = .center
+        contentLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(contentLabel)
+        
+        // "Get Started" 버튼
+        let getStartedButton = UIButton(type: .system)
+        getStartedButton.setTitle("Get Started", for: .normal)
+        getStartedButton.titleLabel?.font = UIFont.appFont(ofSize: 16, weight: .bold)
+        getStartedButton.setTitleColor(.black, for: .normal)
+        getStartedButton.backgroundColor = .white
+        getStartedButton.layer.cornerRadius = 24
+        getStartedButton.translatesAutoresizingMaskIntoConstraints = false
+        getStartedButton.addTarget(self, action: #selector(startSurvey), for: .touchUpInside)
+        view.addSubview(getStartedButton)
+        
+        // 버튼 내 재생 아이콘
+        let playIconImageView = UIImageView(image: UIImage(systemName: "play.fill"))
+        playIconImageView.tintColor = .black // 아이콘 색상 검정으로 변경
+        playIconImageView.translatesAutoresizingMaskIntoConstraints = false
+        getStartedButton.addSubview(playIconImageView)
+        
         NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80),
-
-            startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            startButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 40),
-            startButton.widthAnchor.constraint(equalToConstant: 200),
-            startButton.heightAnchor.constraint(equalToConstant: 48)
+            // Main Title Label
+            mainTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            mainTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            mainTitleLabel.bottomAnchor.constraint(equalTo: contentLabel.topAnchor, constant: -10), // 내용 레이블 위로 배치
+            
+            // Content Label
+            contentLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            contentLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            contentLabel.bottomAnchor.constraint(equalTo: getStartedButton.topAnchor, constant: -40), // 버튼 위로 배치
+            
+            // Get Started Button
+            getStartedButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            getStartedButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32), // 하단 여백 조절
+            getStartedButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8), // 화면 너비의 80%
+            getStartedButton.heightAnchor.constraint(equalToConstant: 48),
+            
+            // Play Icon in Button
+            playIconImageView.centerYAnchor.constraint(equalTo: getStartedButton.centerYAnchor),
+            playIconImageView.leadingAnchor.constraint(equalTo: getStartedButton.leadingAnchor, constant: 20),
+            playIconImageView.widthAnchor.constraint(equalToConstant: 24),
+            playIconImageView.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
-
+    
     // MARK: - Actions
     @objc func startSurvey() {
         let surveyVC = SurveyViewController()
         navigationController?.pushViewController(surveyVC, animated: true)
     }
-
+    
     @objc private func toggleVideoPlayPause() {
         if player?.rate == 0 {
             player?.play()
@@ -117,15 +147,13 @@ class MainViewController: UIViewController {
             player?.pause()
         }
     }
-
-    // 뷰가 사라질 때 비디오 재생을 중지하고, 옵저버도 제거하여 메모리 누수 방지
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         player?.pause()
-        // 옵저버가 존재하면 제거
         if let observer = playerDidFinishObserver {
             NotificationCenter.default.removeObserver(observer)
-            playerDidFinishObserver = nil // nil로 설정하여 더 이상 참조하지 않도록 함
+            playerDidFinishObserver = nil
         }
     }
 }
