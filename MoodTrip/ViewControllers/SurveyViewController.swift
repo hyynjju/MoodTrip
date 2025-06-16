@@ -5,17 +5,14 @@ class SurveyViewController: UIViewController {
     var scores: [String: Int] = [:]
     var questions: [(key: String, question: String, options: [(String, Int)])] = []
     
-    // ⭐️ 추가: SurveyIndicatorView 인스턴스
+    // SurveyIndicatorView 인스턴스 추가 (이전 답변에서 누락되었을 수 있어 추가)
     private var surveyIndicatorView: SurveyIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         setupQuestions()
-        
-        // ⭐️ 추가: 인디케이터 뷰 설정 및 추가
-        setupSurveyIndicator()
-        
+        setupSurveyIndicator() // 인디케이터 설정 호출
         showCurrentQuestion()
         
         // 네비게이션 바 틴트 컬러를 흰색으로 설정
@@ -40,29 +37,29 @@ class SurveyViewController: UIViewController {
         ]
     }
     
-    // ⭐️ 추가: SurveyIndicatorView를 설정하는 메서드
+    // SurveyIndicatorView를 초기화하고 뷰에 추가하는 함수
     private func setupSurveyIndicator() {
         surveyIndicatorView = SurveyIndicatorView(numberOfQuestions: questions.count)
         surveyIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(surveyIndicatorView)
         
         NSLayoutConstraint.activate([
-            surveyIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10), // 상단 safe area에서 10포인트 아래
-            surveyIndicatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            surveyIndicatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            surveyIndicatorView.heightAnchor.constraint(equalToConstant: 8) // 인디케이터 뷰의 높이 (실제 인디케이터 높이와 같게)
+            surveyIndicatorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            surveyIndicatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            surveyIndicatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            surveyIndicatorView.heightAnchor.constraint(equalToConstant: 40) // 인디케이터 뷰의 높이
         ])
     }
     
     func showCurrentQuestion() {
+        // 기존 뷰 제거 (인디케이터 뷰는 제거하지 않음)
         view.subviews.forEach {
-            // ⭐️ 수정: surveyIndicatorView는 제거하지 않도록 필터링
-            if $0 != surveyIndicatorView {
+            if $0 != surveyIndicatorView { // 인디케이터 뷰는 제거하지 않음
                 $0.removeFromSuperview()
             }
         }
         
-        // ⭐️ 추가: 인디케이터 업데이트
+        // 인디케이터 업데이트
         surveyIndicatorView.currentQuestionIndex = currentQuestionIndex
         
         guard currentQuestionIndex < questions.count else {
@@ -82,23 +79,39 @@ class SurveyViewController: UIViewController {
         questionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(questionView)
         NSLayoutConstraint.activate([
-            // ⭐️ 수정: 질문 뷰의 topAnchor를 인디케이터 뷰 아래에 배치
-            questionView.topAnchor.constraint(equalTo: surveyIndicatorView.bottomAnchor, constant: 20),
-            questionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            questionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            questionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            questionView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            questionView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            questionView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1),
+            questionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5)
         ])
     }
     
     func goToResult() {
         let places = JSONLoader.loadPlaces(from: "places")
-        let best = places.max(by: { matchingScore($0) < matchingScore($1) })
+        // ⭐️ 수정: SurveyViewController의 scores를 사용하여 매칭 점수 계산
+        let best = places.max(by: {
+            var score1 = 0
+            for (key, userScore) in self.scores {
+                let placeScore = $0.scores[key] ?? 0
+                score1 += 100 - abs(userScore - placeScore)
+            }
+            
+            var score2 = 0
+            for (key, userScore) in self.scores {
+                let placeScore = $1.scores[key] ?? 0
+                score2 += 100 - abs(userScore - placeScore)
+            }
+            return score1 < score2
+        })
         
         let vc = ResultViewController()
         vc.place = best
+        vc.userScores = self.scores // ⭐️ 중요: ResultViewController로 userScores 전달
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    // 이 matchingScore 함수는 ResultViewController의 userScores로 대체되므로, 여기서는 사용되지 않음.
+    // 하지만 JSONLoader에서 사용될 수 있으므로 일단 유지.
     func matchingScore(_ place: Place) -> Int {
         var score = 0
         for (key, userScore) in scores {

@@ -3,15 +3,27 @@ import MapKit
 
 class ResultViewController: UIViewController {
     var place: Place?
+    // ⭐️ 추가: 사용자의 설문조사 점수를 저장할 배열
+    var userScores: [String: Int] = [:]
+    // ⭐️ 추가: 다음 추천 장소들을 저장할 배열
+    var recommendedPlaces: [Place] = []
+    
     private static let buttonHeight: CGFloat = 50.0
     private static let buttonSpacing: CGFloat = 8.0
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
+    // ⭐️ 추가: 추천 캐러셀을 위한 UICollectionView
+    private var recommendationsCollectionView: UICollectionView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+        
+        // ⭐️ 추가: 추천 장소 데이터 로드 (예시)
+        loadRecommendedPlaces()
+        
         setupUI()
         
         if #available(iOS 13.0, *) {
@@ -35,6 +47,18 @@ class ResultViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
+    }
+    
+    // ⭐️ 추가: 추천 장소 로드 (더미 데이터 또는 실제 로직)
+    private func loadRecommendedPlaces() {
+        let allPlaces = JSONLoader.loadPlaces(from: "places") // 모든 장소 로드
+        
+        // 현재 place를 제외하고, 매칭 점수가 높은 순으로 정렬하여 상위 N개 선택
+        // 여기서는 상위 3개를 예시로 가져옵니다.
+        let filteredPlaces = allPlaces.filter { $0.id != place?.id }
+        // ⭐️ userScores를 사용하여 매칭 점수 계산
+        let sortedPlaces = filteredPlaces.sorted { calculateMatchingScore(for: $0) > calculateMatchingScore(for: $1) }
+        recommendedPlaces = Array(sortedPlaces.prefix(3)) // 상위 3개만 가져오기
     }
     
     private func generateGradientImage(startColor: UIColor, endColor: UIColor, size: CGSize) -> UIImage? {
@@ -81,6 +105,8 @@ class ResultViewController: UIViewController {
         let topImageView = UIImageView()
         topImageView.contentMode = .scaleAspectFill
         topImageView.clipsToBounds = true
+        // ⭐️ 수정: topImageView 모서리 둥글게
+        topImageView.layer.cornerRadius = 12 // 원하는 radius 값 설정
         topImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topImageView)
         
@@ -104,10 +130,10 @@ class ResultViewController: UIViewController {
         
         // MARK: - ScrollView Setup
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView) // 스크롤 뷰를 뷰 컨트롤러의 뷰에 추가
+        view.addSubview(scrollView)
         
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(contentView) // 컨텐츠 뷰를 스크롤 뷰에 추가
+        scrollView.addSubview(contentView)
         
         // MARK: - Tags Section (기존과 동일)
         let tagStack = UIStackView()
@@ -144,7 +170,8 @@ class ResultViewController: UIViewController {
         descriptionLabel.text = place.description
         descriptionLabel.font = .appFont(ofSize: 16)
         descriptionLabel.textColor = .white
-        descriptionLabel.numberOfLines = 3
+        // ⭐️ 수정: descriptionLabel maxline 2
+        descriptionLabel.numberOfLines = 2
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let nameDescStack = UIStackView(arrangedSubviews: [nameLabel, descriptionLabel])
@@ -156,8 +183,9 @@ class ResultViewController: UIViewController {
         // MARK: - Matching Score (CircularProgressView) (기존과 동일)
         let circularProgressView = CircularProgressView()
         circularProgressView.translatesAutoresizingMaskIntoConstraints = false
-        circularProgressView.score = matchingScore(for: place)
-        circularProgressView.progress = CGFloat(matchingScore(for: place)) / 100.0
+        // ⭐️ 수정: userScores를 사용하여 매칭 점수 계산
+        circularProgressView.score = calculateMatchingScore(for: place)
+        circularProgressView.progress = CGFloat(calculateMatchingScore(for: place)) / 100.0
         
         let infoRowStack = UIStackView(arrangedSubviews: [nameDescStack, circularProgressView])
         infoRowStack.axis = .horizontal
@@ -206,6 +234,32 @@ class ResultViewController: UIViewController {
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 5000, longitudinalMeters: 5000)
         mapView.setRegion(region, animated: false)
         
+        // MARK: - Recommended Places Section (새로 추가)
+        let recommendedPlacesTitleLabel = UILabel()
+        let recommendedTitleAttributedString = NSMutableAttributedString()
+        // ⭐️ 추천 타이틀: "✶ More Recommendations"
+        recommendedTitleAttributedString.append(NSAttributedString(string: "✶ More Recommendations\n", attributes: [.font: UIFont.appFont(ofSize: 20, weight: .bold), .foregroundColor: UIColor.white]))
+        recommendedPlacesTitleLabel.attributedText = recommendedTitleAttributedString
+        recommendedPlacesTitleLabel.numberOfLines = 0
+        recommendedPlacesTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(recommendedPlacesTitleLabel) // contentView에 추가
+        
+        // UICollectionViewFlowLayout 설정
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal // 수평 스크롤
+        layout.itemSize = CGSize(width: 240, height: 250) // ⭐️ 수정: 셀 크기 (너비 240, 높이 250)
+        layout.minimumLineSpacing = 16 // 셀 간 간격
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20) // 좌우 여백
+        
+        recommendationsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        recommendationsCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        recommendationsCollectionView.backgroundColor = .clear // 배경 투명
+        recommendationsCollectionView.showsHorizontalScrollIndicator = false // 스크롤바 숨김
+        recommendationsCollectionView.dataSource = self // 데이터 소스 설정
+        recommendationsCollectionView.delegate = self // 델리게이트 설정
+        recommendationsCollectionView.register(RecommendedPlaceCell.self, forCellWithReuseIdentifier: RecommendedPlaceCell.reuseIdentifier) // 셀 등록
+        contentView.addSubview(recommendationsCollectionView) // contentView에 추가
+        
         // MARK: - Bottom Action Buttons (기존과 동일)
         let mapButton = BottomActionButton(type: .map) { [weak self] in
             self?.navigateToMap()
@@ -224,6 +278,8 @@ class ResultViewController: UIViewController {
         bottomButtonStack.alignment = .center
         bottomButtonStack.translatesAutoresizingMaskIntoConstraints = false
         
+        view.addSubview(bottomButtonStack) // 하단 버튼 스택 뷰는 스크롤 뷰 위에 고정되게 추가
+        
         // MARK: - Add Subviews and Constraints
         contentView.addSubview(tagStack)
         contentView.addSubview(infoRowStack)
@@ -232,7 +288,7 @@ class ResultViewController: UIViewController {
         contentView.addSubview(mapView)
         contentView.addSubview(aboutInfoLabel)
         
-        view.addSubview(bottomButtonStack) // 하단 버튼 스택 뷰는 스크롤 뷰 위에 고정되게 추가
+        view.addSubview(bottomButtonStack)
         
         NSLayoutConstraint.activate([
             // 배경 이미지 (기존과 동일)
@@ -257,14 +313,14 @@ class ResultViewController: UIViewController {
             topImageView.topAnchor.constraint(equalTo: view.topAnchor),
             topImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topImageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
+            // ⭐️ 수정: topImageView 높이 240
+            topImageView.heightAnchor.constraint(equalToConstant: 240),
             
             // 스크롤 뷰 제약 조건:
-            // 이제 스크롤 뷰가 화면 하단까지 쭉 내려가도록 합니다.
             scrollView.topAnchor.constraint(equalTo: topImageView.bottomAnchor, constant: -70),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor), // ⭐️ 변경: 화면 하단까지 확장
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             // 컨텐츠 뷰 제약 조건 (스크롤 뷰 내에서)
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
@@ -297,8 +353,8 @@ class ResultViewController: UIViewController {
             locationInfoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             locationInfoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // 지도 뷰 (요청하신 constant 변경 적용)
-            mapView.topAnchor.constraint(equalTo: locationInfoLabel.bottomAnchor, constant: -24), // ⭐️ 요청하신 constant 변경
+            // 지도 뷰 (기존과 동일)
+            mapView.topAnchor.constraint(equalTo: locationInfoLabel.bottomAnchor, constant: -24),
             mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             mapView.heightAnchor.constraint(equalToConstant: 160),
@@ -307,7 +363,20 @@ class ResultViewController: UIViewController {
             aboutInfoLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
             aboutInfoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             aboutInfoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            aboutInfoLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -150),
+            
+            // ⭐️ 추천 장소 타이틀 레이블 제약 조건
+            recommendedPlacesTitleLabel.topAnchor.constraint(equalTo: aboutInfoLabel.bottomAnchor, constant: 30), // About 섹션 아래
+            recommendedPlacesTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            recommendedPlacesTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            // ⭐️ 추천 캐러셀 컬렉션 뷰 제약 조건
+            recommendationsCollectionView.topAnchor.constraint(equalTo: recommendedPlacesTitleLabel.bottomAnchor, constant: -10),
+            recommendationsCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            recommendationsCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            recommendationsCollectionView.heightAnchor.constraint(equalToConstant: 250), // 셀 높이 + 여유 공간 (텍스트 라벨이 하단에 있으므로)
+            
+            // 컨텐츠 뷰의 하단 제약 조건 (스크롤뷰 높이 결정)
+            recommendationsCollectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -100), // 하단 버튼 위 여유 공간
             
             // 하단 버튼 스택 뷰 (기존과 동일)
             bottomButtonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -323,26 +392,23 @@ class ResultViewController: UIViewController {
             mapButton.heightAnchor.constraint(equalToConstant: Self.buttonHeight),
             
             // 맵 버튼 너비 (기존과 동일)
-            mapButton.widthAnchor.constraint(equalTo: bottomButtonStack.widthAnchor, multiplier: 1.0, constant: -Self.buttonHeight - Self.buttonSpacing),
+            mapButton.widthAnchor.constraint(equalTo: bottomButtonStack.widthAnchor, multiplier: 1.0, constant: -(Self.buttonHeight + Self.buttonSpacing)),
         ])
         
         view.layoutIfNeeded()
         gradientLayer.frame = gradientOverlay.bounds
         
-        // MARK: - 뷰 계층 조정 (버튼이 스크롤뷰 위에 그려지도록)
-        // bottomButtonStack이 scrollView보다 나중에 추가되도록 하거나, 명시적으로 위로 올립니다.
-        // 현재 코드에서는 view.addSubview(scrollView) 다음에 view.addSubview(bottomButtonStack) 이므로
-        // bottomButtonStack이 기본적으로 scrollView 위에 위치합니다.
-        // 만약 문제가 있다면 이 코드를 추가하여 확실히 상단으로 올릴 수 있습니다.
         view.bringSubviewToFront(bottomButtonStack)
     }
     
-    // ... (matchingScore, backTapped, heartTapped, navigateToMap, toggleCheckmark 메서드, PaddingLabel, InfoBoxView 클래스는 변경 없음)
-    private func matchingScore(for place: Place?) -> Int {
-        guard let unwrappedPlace = place else { return 0 }
-        let total = unwrappedPlace.scores.values.reduce(0, +)
-        guard unwrappedPlace.scores.count > 0 else { return 0 }
-        return total / unwrappedPlace.scores.count
+    // ⭐️ 수정: userScores를 활용하여 매칭 점수를 계산하는 함수
+    private func calculateMatchingScore(for place: Place) -> Int {
+        var score = 0
+        for (key, userScore) in userScores {
+            let placeScore = place.scores[key] ?? 0
+            score += 100 - abs(userScore - placeScore)
+        }
+        return score
     }
     
     @objc private func backTapped() {
@@ -356,7 +422,7 @@ class ResultViewController: UIViewController {
     // MARK: - Button Actions
     private func navigateToMap() {
         guard let place = place else { return }
-        let mapVC = MapViewController()
+        let mapVC = MapViewController() // MapViewController는 별도로 정의되어 있어야 함
         mapVC.place = place
         navigationController?.pushViewController(mapVC, animated: true)
     }
@@ -366,6 +432,37 @@ class ResultViewController: UIViewController {
         if let checkButton = (self.view.subviews.compactMap { $0 as? UIStackView }.first?.arrangedSubviews.last as? BottomActionButton) {
             checkButton.setChecked(true)
         }
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension ResultViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return recommendedPlaces.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendedPlaceCell.reuseIdentifier, for: indexPath) as? RecommendedPlaceCell else {
+            fatalError("Failed to dequeue RecommendedPlaceCell")
+        }
+        let place = recommendedPlaces[indexPath.item]
+        // ⭐️ calculateMatchingScore 함수를 사용하여 정확한 점수 전달
+        let score = calculateMatchingScore(for: place)
+        cell.configure(with: place, matchingScore: score)
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension ResultViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedPlace = recommendedPlaces[indexPath.item]
+        print("Selected recommended place: \(selectedPlace.name)")
+        // 선택된 추천 장소로 이동하는 로직 구현 (예: 새로운 ResultViewController 푸시)
+        let vc = ResultViewController()
+        vc.place = selectedPlace
+        vc.userScores = self.userScores // ⭐️ 중요: 추천 결과로 다시 이동할 때도 userScores 전달
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
