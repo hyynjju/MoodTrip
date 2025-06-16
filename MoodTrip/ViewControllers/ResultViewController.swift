@@ -261,7 +261,7 @@ class ResultViewController: UIViewController {
             
             // 스크롤 뷰 제약 조건:
             // 이제 스크롤 뷰가 화면 하단까지 쭉 내려가도록 합니다.
-            scrollView.topAnchor.constraint(equalTo: topImageView.bottomAnchor, constant: -20),
+            scrollView.topAnchor.constraint(equalTo: topImageView.bottomAnchor, constant: -70),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor), // ⭐️ 변경: 화면 하단까지 확장
@@ -307,7 +307,7 @@ class ResultViewController: UIViewController {
             aboutInfoLabel.topAnchor.constraint(equalTo: mapView.bottomAnchor, constant: 16),
             aboutInfoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             aboutInfoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            aboutInfoLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            aboutInfoLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -150),
             
             // 하단 버튼 스택 뷰 (기존과 동일)
             bottomButtonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
