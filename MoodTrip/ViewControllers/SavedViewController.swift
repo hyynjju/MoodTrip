@@ -46,6 +46,12 @@ class SavedViewController: UIViewController {
         view.isHidden = false
         return view
     }()
+    
+    private let gradientView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     private let savedListVC = SavedListViewController()
     private let savedMapVC = SavedMapViewController()
@@ -56,6 +62,13 @@ class SavedViewController: UIViewController {
         setupChildControllers() // 자식 컨트롤러 먼저 설정 (뷰가 전체를 덮도록)
         setupUI() // UI 요소를 그 위에 추가
         setupGestureRecognizers()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if let gradientLayer = gradientView.layer.sublayers?.first as? CAGradientLayer {
+            gradientLayer.frame = gradientView.bounds
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -72,27 +85,46 @@ class SavedViewController: UIViewController {
     }
 
     private func setupUI() {
+        gradientView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(gradientView)
         view.addSubview(segmentControl)
         view.addSubview(selectionIndicator)
-        
-        // segmentControl이 항상 최상단에 오도록
+
+        // Bring to front in correct order
+        view.bringSubviewToFront(gradientView) // gradient is under tabs
         view.bringSubviewToFront(segmentControl)
         view.bringSubviewToFront(selectionIndicator)
-        
+
         segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
-        
+
         NSLayoutConstraint.activate([
+            gradientView.topAnchor.constraint(equalTo: view.topAnchor),
+            gradientView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            gradientView.heightAnchor.constraint(equalToConstant: 160),
+
             segmentControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             segmentControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             segmentControl.widthAnchor.constraint(equalToConstant: 220),
             segmentControl.heightAnchor.constraint(equalToConstant: 32),
-            
+
             // 선택 인디케이터 위치 (List 탭 위치에 초기 설정)
             selectionIndicator.widthAnchor.constraint(equalToConstant: 6),
             selectionIndicator.heightAnchor.constraint(equalToConstant: 6),
             selectionIndicator.centerYAnchor.constraint(equalTo: segmentControl.centerYAnchor, constant: 0),
             selectionIndicator.leadingAnchor.constraint(equalTo: segmentControl.leadingAnchor, constant: 30)
         ])
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor.black.withAlphaComponent(1.0).cgColor,
+            UIColor.black.withAlphaComponent(1.0).cgColor,
+            UIColor.black.withAlphaComponent(0.0).cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.5, 1.0]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        gradientLayer.frame = gradientView.bounds
+        gradientView.layer.insertSublayer(gradientLayer, at: 0)
     }
 
     private func setupChildControllers() {
@@ -123,6 +155,9 @@ class SavedViewController: UIViewController {
         // 초기 상태 설정
         savedMapVC.view.alpha = 0
         savedMapVC.view.transform = CGAffineTransform(translationX: 50, y: 0)
+        
+        view.bringSubviewToFront(segmentControl)
+        view.bringSubviewToFront(selectionIndicator)
     }
     
     private func setupGestureRecognizers() {
