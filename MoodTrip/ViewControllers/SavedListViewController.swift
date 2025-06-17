@@ -7,8 +7,9 @@ class SavedListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = .clear
         setupCollectionView()
+        addBottomGradientOverlay()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -43,6 +44,33 @@ class SavedListViewController: UIViewController {
     private func loadBookmarkedPlaces() {
         bookmarkedPlaces = BookmarkManager.getBookmarkedPlaces()
         collectionView.reloadData()
+    }
+
+    private func addBottomGradientOverlay() {
+        let gradientView = UIView()
+        gradientView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(gradientView)
+        view.bringSubviewToFront(gradientView)
+
+        NSLayoutConstraint.activate([
+            gradientView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            gradientView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            gradientView.heightAnchor.constraint(equalToConstant: 120)
+        ])
+
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor.black.withAlphaComponent(1.0).cgColor,
+            UIColor.black.withAlphaComponent(1.0).cgColor,
+            UIColor.black.withAlphaComponent(0.0).cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.5, 1.0]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 1)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 0)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 120)
+
+        gradientView.layer.addSublayer(gradientLayer)
     }
 }
 

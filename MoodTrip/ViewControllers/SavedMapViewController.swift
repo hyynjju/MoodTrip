@@ -23,7 +23,15 @@ class SavedMapViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        if let tabBar = self.tabBarController?.tabBar {
+            let transparentAppearance = UITabBarAppearance()
+            transparentAppearance.configureWithTransparentBackground()
+            tabBar.standardAppearance = transparentAppearance
+            if #available(iOS 15.0, *) {
+                tabBar.scrollEdgeAppearance = transparentAppearance
+            }
+        }
+        view.backgroundColor = .clear
         setupMapView()
         loadBookmarkedPlaces()
         displayBookmarkedPlacesOnMap()
