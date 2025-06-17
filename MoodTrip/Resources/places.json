@@ -1,92 +1,273 @@
 [
-  {
-    "id": 1,
-    "name": "Jeju Island",
-    "description": "A scenic volcanic island known for nature and beaches.",
-    "imageURL": "https://media.cnn.com/api/v1/images/stellar/prod/130624120523-jeju-island-beach.jpg?q=x_112,y_0,h_2916,w_5184,c_crop/h_833,w_1480",
-    "latitude": 33.4996,
-    "longitude": 126.5312,
-    "scores": {
-      "calm": 90,
-      "family": 80,
-      "nature": 95
+    {
+        "id": 1,
+        "name": "Jeju Island",
+        "description": "A scenic volcanic island known for nature and beaches.",
+        "imageURL": "https://media.cnn.com/api/v1/images/stellar/prod/130624120523-jeju-island-beach.jpg?q=x_112,y_0,h_2916,w_5184,c_crop/h_833,w_1480",
+        "latitude": 33.4996,
+        "longitude": 126.5312,
+        "scores": {
+            "calm": 90,
+            "family": 80,
+            "nature": 95
+        },
+        "tags": ["nature", "beach"],
+        "recommendedDuration": "3 days 2 nights",
+        "bestWith": "Family",
+        "address": "Jeju Island, Jeju Province, South Korea",
+        "detailedDescription": "Jeju Island is a volcanic island with breathtaking landscapes, pristine beaches, and lush forests. It is a popular destination for both adventure seekers and those looking to relax. Visitors can enjoy hiking Hallasan, exploring lava tubes, and tasting local seafood. The island also offers cultural experiences like traditional villages and museums. Jeju's slow pace and natural beauty make it ideal for family vacations and nature lovers."
     },
-    "tags": ["nature", "beach"],
-    "recommendedDuration": "3 days 2 nights",
-    "bestWith": "Family",
-    "address": "Jeju Island, Jeju Province, South Korea",
-    "detailedDescription": "Jeju Island is a volcanic island with breathtaking landscapes, pristine beaches, and lush forests. It is a popular destination for both adventure seekers and those looking to relax. Visitors can enjoy hiking Hallasan, exploring lava tubes, and tasting local seafood. The island also offers cultural experiences like traditional villages and museums. Jeju's slow pace and natural beauty make it ideal for family vacations and nature lovers."
-  },
-  {
-    "id": 2,
-    "name": "Seoul",
-    "description": "Vibrant city life with rich culture and food.",
-    "imageURL": "https://img.freepik.com/free-photo/south-korea-skyline-seoul-best-view-south-korea-with-lotte-world-mall-namhansanseong-fortress_335224-495.jpg?semt=ais_hybrid&w=740",
-    "latitude": 37.5665,
-    "longitude": 126.9780,
-    "scores": {
-      "calm": 50,
-      "family": 70,
-      "nature": 30
+    {
+        "id": 2,
+        "name": "Seoul",
+        "description": "Vibrant city life with rich culture and food.",
+        "imageURL": "https://img.freepik.com/free-photo/south-korea-skyline-seoul-best-view-south-korea-with-lotte-world-mall-namhansanseong-fortress_335224-495.jpg?semt=ais_hybrid&w=740",
+        "latitude": 37.5665,
+        "longitude": 126.9780,
+        "scores": {
+            "calm": 50,
+            "family": 70,
+            "nature": 30
+        },
+        "tags": ["city", "culture"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Friends",
+        "address": "Seoul, South Korea",
+        "detailedDescription": "Seoul is the dynamic capital of South Korea, offering a perfect blend of modern skyscrapers and historical palaces. The city is known for its vibrant nightlife, shopping districts, and diverse street food. Tourists can explore ancient palaces, enjoy K-pop performances, and relax in Han River parks. It is ideal for friends looking for excitement, culture, and endless exploration in an urban setting."
     },
-    "tags": ["city", "culture"],
-    "recommendedDuration": "2 days 1 night",
-    "bestWith": "Friends",
-    "address": "Seoul, South Korea",
-    "detailedDescription": "Seoul is the dynamic capital of South Korea, offering a perfect blend of modern skyscrapers and historical palaces. The city is known for its vibrant nightlife, shopping districts, and diverse street food. Tourists can explore ancient palaces, enjoy K-pop performances, and relax in Han River parks. It is ideal for friends looking for excitement, culture, and endless exploration in an urban setting."
-  },
-  {
-    "id": 3,
-    "name": "Busan",
-    "description": "A port city with beautiful beaches and seafood.",
-    "imageURL": "https://a.travel-assets.com/findyours-php/viewfinder/images/res70/246000/246849-Busan.jpg",
-    "latitude": 35.1796,
-    "longitude": 129.0756,
-    "scores": {
-      "calm": 70,
-      "family": 60,
-      "nature": 80
+    {
+        "id": 3,
+        "name": "Busan",
+        "description": "A port city with beautiful beaches and seafood.",
+        "imageURL": "https://a.travel-assets.com/findyours-php/viewfinder/images/res70/246000/246849-Busan.jpg",
+        "latitude": 35.1796,
+        "longitude": 129.0756,
+        "scores": {
+            "calm": 70,
+            "family": 60,
+            "nature": 80
+        },
+        "tags": ["beach", "seafood"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Couple",
+        "address": "Busan, South Korea",
+        "detailedDescription": "Busan is a coastal city famous for its sandy beaches, seafood markets, and relaxed atmosphere. Visitors can enjoy Haeundae and Gwangalli beaches, fresh seafood at Jagalchi Market, and scenic hikes along coastal trails. The city offers a romantic vibe for couples, as well as vibrant night scenes and cultural landmarks like temples and museums."
     },
-    "tags": ["beach", "seafood"],
-    "recommendedDuration": "2 days 1 night",
-    "bestWith": "Couple",
-    "address": "Busan, South Korea",
-    "detailedDescription": "Busan is a coastal city famous for its sandy beaches, seafood markets, and relaxed atmosphere. Visitors can enjoy Haeundae and Gwangalli beaches, fresh seafood at Jagalchi Market, and scenic hikes along coastal trails. The city offers a romantic vibe for couples, as well as vibrant night scenes and cultural landmarks like temples and museums."
-  },
-  {
-    "id": 4,
-    "name": "Gyeongju",
-    "description": "Historical city with ancient temples and tombs.",
-    "imageURL": "https://busantourism.co.kr/cdn/shop/products/exploring-gyungju-full-of-unesco-heritage-1-day-tour-232518.jpg?v=1692841664",
-    "latitude": 35.8562,
-    "longitude": 129.2247,
-    "scores": {
-      "calm": 80,
-      "family": 90,
-      "nature": 70
+    {
+        "id": 4,
+        "name": "Gyeongju",
+        "description": "Historical city with ancient temples and tombs.",
+        "imageURL": "https://busantourism.co.kr/cdn/shop/products/exploring-gyungju-full-of-unesco-heritage-1-day-tour-232518.jpg?v=1692841664",
+        "latitude": 35.8562,
+        "longitude": 129.2247,
+        "scores": {
+            "calm": 80,
+            "family": 90,
+            "nature": 70
+        },
+        "tags": ["history", "temple"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Family",
+        "address": "Gyeongju, North Gyeongsang Province, South Korea",
+        "detailedDescription": "Gyeongju is often referred to as a 'museum without walls' due to its rich historical heritage. It was once the capital of the ancient Silla Kingdom, and visitors can explore Bulguksa Temple, Seokguram Grotto, and ancient burial mounds. It is perfect for educational family trips and those interested in Korean history and architecture."
     },
-    "tags": ["history", "temple"],
-    "recommendedDuration": "Day trip",
-    "bestWith": "Family",
-    "address": "Gyeongju, North Gyeongsang Province, South Korea",
-    "detailedDescription": "Gyeongju is often referred to as a 'museum without walls' due to its rich historical heritage. It was once the capital of the ancient Silla Kingdom, and visitors can explore Bulguksa Temple, Seokguram Grotto, and ancient burial mounds. It is perfect for educational family trips and those interested in Korean history and architecture."
-  },
-  {
-    "id": 5,
-    "name": "Incheon",
-    "description": "Modern city near the capital with coastal views.",
-    "imageURL": "https://img.nmcdn.io/e1/w:1047,h:766,v:1/kpf2024/wp-content/uploads/2015/09/1394_1_000_N861_large-scaled.webp?s=03648359",
-    "latitude": 37.4563,
-    "longitude": 126.7052,
-    "scores": {
-      "calm": 60,
-      "family": 50,
-      "nature": 40
+    {
+        "id": 5,
+        "name": "Incheon",
+        "description": "Modern city near the capital with coastal views.",
+        "imageURL": "https://img.nmcdn.io/e1/w:1047,h:766,v:1/kpf2024/wp-content/uploads/2015/09/1394_1_000_N861_large-scaled.webp?s=03648359",
+        "latitude": 37.4563,
+        "longitude": 126.7052,
+        "scores": {
+            "calm": 60,
+            "family": 50,
+            "nature": 40
+        },
+        "tags": ["modern", "harbor"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Solo",
+        "address": "Incheon, South Korea",
+        "detailedDescription": "Incheon is a gateway city located west of Seoul, known for its international airport and coastal charm. The city blends modern infrastructure with coastal attractions like Songdo Central Park and Wolmido Island. It’s a great choice for solo travelers looking for a quick getaway, harbor views, and a taste of Korea’s city life outside Seoul."
+    }
+    
+    {
+        "id": 6,
+        "name": "Andong",
+        "description": "Traditional culture and Hahoe Folk Village.",
+        "imageURL": "https://cdn.dkilbo.com/news/photo/201812/164544_121740_1150.jpg",
+        "latitude": 36.5684,
+        "longitude": 128.7294,
+        "scores": {
+            "calm": 85,
+            "family": 70,
+            "nature": 75
+        },
+        "tags": ["culture", "folk"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Family",
+        "address": "Andong, North Gyeongsang Province, South Korea",
+        "detailedDescription": "Andong is known as the spiritual home of Confucianism in Korea. It is famous for the Hahoe Folk Village, a UNESCO World Heritage site, where visitors can experience traditional hanok houses and cultural performances. Ideal for families seeking educational trips into Korea's traditional past."
     },
-    "tags": ["modern", "harbor"],
-    "recommendedDuration": "Day trip",
-    "bestWith": "Solo",
-    "address": "Incheon, South Korea",
-    "detailedDescription": "Incheon is a gateway city located west of Seoul, known for its international airport and coastal charm. The city blends modern infrastructure with coastal attractions like Songdo Central Park and Wolmido Island. It’s a great choice for solo travelers looking for a quick getaway, harbor views, and a taste of Korea’s city life outside Seoul."
-  }
+    {
+        "id": 7,
+        "name": "Gangneung",
+        "description": "Beach and culture on the east coast.",
+        "imageURL": "https://www.gtdc.or.kr/dzSmart/upfiles/2024May/20/1715547978_99d6c883f9fd955b595ccee1bcf95dd1.jpg",
+        "latitude": 37.7519,
+        "longitude": 128.8761,
+        "scores": {
+            "calm": 75,
+            "family": 65,
+            "nature": 85
+        },
+        "tags": ["beach", "coffee"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Couple",
+        "address": "Gangneung, Gangwon Province, South Korea",
+        "detailedDescription": "Gangneung offers beautiful east coast beaches like Gyeongpo and a vibrant coffee street culture. It’s a romantic coastal getaway, perfect for couples and friends. Enjoy seaside walks, marine museums, and local cuisine."
+    },
+    {
+        "id": 8,
+        "name": "Sokcho",
+        "description": "Gateway to Seoraksan National Park.",
+        "imageURL": "https://i.namu.wiki/i/VU1u3fYqWTvug6xME7sBR8o76KU-abzg2yfKa2dtYjT7Xe0YveLq9lAFN7bM5R0bYAYZTCaaDAiRwz6Rruq1PQ.webp",
+        "latitude": 38.2070,
+        "longitude": 128.5917,
+        "scores": {
+            "calm": 80,
+            "family": 85,
+            "nature": 90
+        },
+        "tags": ["mountain", "hiking"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Friends",
+        "address": "Sokcho, Gangwon Province, South Korea",
+        "detailedDescription": "Sokcho is the entry point to Seoraksan, Korea’s most scenic mountain range. Hike trails, explore Buddhist temples, and enjoy fresh seafood. It's a top choice for nature lovers and outdoor adventurers."
+    },
+    {
+        "id": 9,
+        "name": "Tongyeong",
+        "description": "Coastal city with island hopping tours.",
+        "imageURL": "https://file2.nocutnews.co.kr/newsroom/image/2018/04/17/20180417163407297198_0_1100_733.jpg",
+        "latitude": 34.8544,
+        "longitude": 128.4333,
+        "scores": {
+            "calm": 75,
+            "family": 60,
+            "nature": 85
+        },
+        "tags": ["harbor", "island"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Couple",
+        "address": "Tongyeong, South Gyeongsang Province, South Korea",
+        "detailedDescription": "Tongyeong is often called the 'Naples of Korea' with its charming port, seafood markets, and nearby islands. It’s a relaxing destination for couples and photographers."
+    },
+    {
+        "id": 10,
+        "name": "Chuncheon",
+        "description": "Romantic lakes and famous Dakgalbi.",
+        "imageURL": "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202104/15/9dc7194a-30cc-4005-aabc-372e362b29f9.jpg",
+        "latitude": 37.8813,
+        "longitude": 127.7298,
+        "scores": {
+            "calm": 65,
+            "family": 75,
+            "nature": 70
+        },
+        "tags": ["lake", "romance"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Couple",
+        "address": "Chuncheon, Gangwon Province, South Korea",
+        "detailedDescription": "Chuncheon is known for its scenic lakes and famous spicy chicken dish, Dakgalbi. Nami Island is a nearby romantic escape, perfect for couples and young travelers."
+    },
+    {
+        "id": 11,
+        "name": "Daejeon",
+        "description": "Science, museums, and parks.",
+        "imageURL": "https://mediaim.expedia.com/destination/1/d3b20d40effa17443577f7279d96aaad.jpg",
+        "latitude": 36.3504,
+        "longitude": 127.3845,
+        "scores": {
+            "calm": 55,
+            "family": 65,
+            "nature": 60
+        },
+        "tags": ["science", "city"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Friends",
+        "address": "Daejeon, South Korea",
+        "detailedDescription": "Daejeon is a hub of science and technology with attractions like the National Science Museum and Expo Park. A good spot for families and curious minds to learn and play."
+    },
+    {
+        "id": 12,
+        "name": "Yeosu",
+        "description": "Beautiful night sea and coastal parks.",
+        "imageURL": "https://mediaim.expedia.com/destination/1/f0575d15f9ee297a5ec70b93972dde69.jpg",
+        "latitude": 34.7604,
+        "longitude": 127.6622,
+        "scores": {
+            "calm": 85,
+            "family": 70,
+            "nature": 80
+        },
+        "tags": ["nightview", "coast"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Couple",
+        "address": "Yeosu, South Jeolla Province, South Korea",
+        "detailedDescription": "Yeosu is famous for its night views, cable cars, and ocean-facing parks. Visitors can enjoy seafood, marine activities, and romantic walks along the coast."
+    },
+    {
+        "id": 13,
+        "name": "Jeonju",
+        "description": "Korean food and traditional hanok village.",
+        "imageURL": "https://images.ctfassets.net/dsbipkqphva2/5KYhnoufqIlzkg3yRCk967/8cd56515d2071a161588c233afb3b314/jeonju-jeollabuk-do-things-to-do-LEAD.jpg",
+        "latitude": 35.8242,
+        "longitude": 127.1479,
+        "scores": {
+            "calm": 70,
+            "family": 80,
+            "nature": 60
+        },
+        "tags": ["hanok", "food"],
+        "recommendedDuration": "2 days 1 night",
+        "bestWith": "Family",
+        "address": "Jeonju, North Jeolla Province, South Korea",
+        "detailedDescription": "Jeonju is the home of bibimbap and a famous hanok village. Enjoy traditional Korean architecture, street food, and cultural experiences with your loved ones."
+    },
+    {
+        "id": 14,
+        "name": "Ulsan",
+        "description": "Industrial city with natural parks.",
+        "imageURL": "https://mediaim.expedia.com/destination/1/f62251a0f0fd512a6cda340257a4ac12.jpg",
+        "latitude": 35.5384,
+        "longitude": 129.3114,
+        "scores": {
+            "calm": 60,
+            "family": 55,
+            "nature": 75
+        },
+        "tags": ["industry", "park"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Solo",
+        "address": "Ulsan, South Korea",
+        "detailedDescription": "Ulsan is a major industrial city with hidden gems like Taehwagang River Park and Daewangam Rock. It's a surprising mix of industry and nature, best explored alone or with a camera."
+    },
+    {
+        "id": 15,
+        "name": "Namyangju",
+        "description": "Riverside trails and filming locations.",
+        "imageURL": "https://www.nyj.go.kr/site/culture/images/contents/cts239_img06.jpg",
+        "latitude": 37.6367,
+        "longitude": 127.2165,
+        "scores": {
+            "calm": 70,
+            "family": 60,
+            "nature": 75
+        },
+        "tags": ["river", "filming"],
+        "recommendedDuration": "Day trip",
+        "bestWith": "Solo",
+        "address": "Namyangju, Gyeonggi Province, South Korea",
+        "detailedDescription": "Namyangju is known for peaceful riverside parks and famous Korean drama filming spots. Ideal for solo travelers looking for reflection and cinematic scenery."
+    }
 ]
