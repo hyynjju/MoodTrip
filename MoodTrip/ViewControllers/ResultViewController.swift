@@ -1,42 +1,51 @@
 import UIKit
 import MapKit
+import CoreLocation
 
 class ResultViewController: UIViewController {
     var place: Place?
     var userScores: [String: Int] = [:]
     var recommendedPlaces: [Place] = []
-    
+
     private static let buttonHeight: CGFloat = 50.0
     private static let buttonSpacing: CGFloat = 8.0
-    
+
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    
+
     private var recommendationsCollectionView: UICollectionView!
-    
+
     private let topImageView = UIImageView()
     private var topImageViewHeightConstraint: NSLayoutConstraint!
     private let topImageViewGradientMask = CAGradientLayer()
-    
+
     private let maxTopImageViewHeight: CGFloat = 320
     private let minTopImageViewHeight: CGFloat = 120
     private let scrollOffsetToFade: CGFloat = 100
-    
+
     // ⭐️ 즐겨찾기 버튼을 위한 프로퍼티
     private var bookmarkButton: UIBarButtonItem!
+
+    private let locationManager = CLLocationManager()
+    private var userLocation: CLLocation?
+    private var infoBox: InfoBoxView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        
+
         loadRecommendedPlaces()
         setupUI()
-        
+
         // ⭐️ 네비게이션 바 설정 및 즐겨찾기 버튼 추가
         setupNavigationBar()
-        
+
         // ⭐️ 현재 장소의 즐겨찾기 상태에 따라 버튼 이미지 초기 설정
         updateBookmarkButton()
+
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -229,7 +238,7 @@ class ResultViewController: UIViewController {
         infoRowStack.alignment = .bottom
         infoRowStack.translatesAutoresizingMaskIntoConstraints = false
         
-        let infoBox = InfoBoxView(tripLength: place.recommendedDuration, bestWith: place.bestWith, distance: "12.3 km")
+        infoBox = InfoBoxView(tripLength: place.recommendedDuration, bestWith: place.bestWith, distance: "...")
         infoBox.translatesAutoresizingMaskIntoConstraints = false
         
         let locationInfoLabel = UILabel()
@@ -408,6 +417,19 @@ class ResultViewController: UIViewController {
         
         view.bringSubviewToFront(bottomButtonStack)
     }
+
+    // MARK: - Distance Update
+    private func updateDistanceIfNeeded() {
+        guard let userLocation = userLocation else { return }
+        guard let place = self.place else { return }
+
+        let destination = CLLocation(latitude: place.latitude, longitude: place.longitude)
+        let distanceInMeters = userLocation.distance(from: destination)
+        let distanceInKilometers = distanceInMeters / 1000.0
+        let formattedDistance = String(format: "%.1f km", distanceInKilometers)
+
+        infoBox?.updateDistanceLabel(to: formattedDistance)
+    }
     
     private func calculateMatchingScore(for place: Place) -> Int {
         var rawScore = 0
@@ -518,19 +540,21 @@ class PaddingLabel: UILabel {
     }
 }
 
-// InfoBoxView 클래스 (변경 없음)
+// InfoBoxView 클래스 (변경)
 class InfoBoxView: UIView {
+    private var distanceValueLabel: UILabel?
+
     init(tripLength: String, bestWith: String, distance: String) {
         super.init(frame: .zero)
         layer.cornerRadius = 20
         clipsToBounds = true
-        
+
         let backgroundGradientLayer = CAGradientLayer()
         backgroundGradientLayer.colors = [UIColor.white.withAlphaComponent(0.06).cgColor, UIColor.white.withAlphaComponent(0.2).cgColor]
         backgroundGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         backgroundGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         layer.insertSublayer(backgroundGradientLayer, at: 0)
-        
+
         let borderGradientLayer = CAGradientLayer()
         borderGradientLayer.colors = [
             UIColor.white.withAlphaComponent(0.35).cgColor,
@@ -540,44 +564,52 @@ class InfoBoxView: UIView {
         borderGradientLayer.locations = [0.0, 0.33, 1.0]
         borderGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         borderGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-        
+
         let borderShapeLayer = CAShapeLayer()
         borderShapeLayer.lineWidth = 3
         borderShapeLayer.strokeColor = UIColor.black.cgColor
         borderShapeLayer.fillColor = nil
-        
+
         borderGradientLayer.mask = borderShapeLayer
-        
+
         layer.addSublayer(borderGradientLayer)
-        
+
         let labels = [("Trip Length", tripLength), ("Best With", bestWith), ("Distance", distance)]
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.distribution = .fillEqually
         stack.alignment = .center
         stack.translatesAutoresizingMaskIntoConstraints = false
-        
+
         for (title, value) in labels {
             let titleLabel = UILabel()
             titleLabel.text = title
             titleLabel.font = .appFont(ofSize: 14)
             titleLabel.textColor = .white.withAlphaComponent(0.7)
             titleLabel.textAlignment = .center
-            
+
             let valueLabel = UILabel()
             valueLabel.text = value
             valueLabel.font = .appFont(ofSize: 18, weight: .bold)
             valueLabel.textColor = .white
             valueLabel.textAlignment = .center
-            
+
+            if title == "Distance" {
+                self.distanceValueLabel = valueLabel
+            }
+            if title == "Trip Length" {
+                valueLabel.setContentHuggingPriority(.required, for: .horizontal)
+                valueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+            }
+
             let verticalStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
             verticalStack.axis = .vertical
             verticalStack.alignment = .center
             verticalStack.spacing = 4
-            
+
             stack.addArrangedSubview(verticalStack)
         }
-        
+
         addSubview(stack)
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: topAnchor, constant: 12),
@@ -586,25 +618,39 @@ class InfoBoxView: UIView {
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
     }
-    
+
+    func updateDistanceLabel(to newDistance: String) {
+        distanceValueLabel?.text = newDistance
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         if let backgroundGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask == nil }) {
             backgroundGradientLayer.frame = bounds
         }
-        
+
         if let borderGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask != nil }) as? CAGradientLayer,
             let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
-            
+
             borderGradientLayer.frame = bounds
-            
+
             let path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius)
             borderShapeLayer.path = path.cgPath
         }
+    }
+}
+
+
+extension ResultViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let latestLocation = locations.last else { return }
+        userLocation = latestLocation
+        updateDistanceIfNeeded()
+        locationManager.stopUpdatingLocation()
     }
 }

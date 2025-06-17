@@ -9,6 +9,11 @@
 		<string>PPMori-SemiBold.otf</string>
 	</array>
 
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to show distances</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app uses your location to calculate travel distances</string>
+
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
