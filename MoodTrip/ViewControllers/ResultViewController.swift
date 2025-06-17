@@ -86,10 +86,10 @@ class ResultViewController: UIViewController {
         guard let place = place else { return }
         if BookmarkManager.isBookmarked(placeID: place.id) {
             bookmarkButton.image = UIImage(systemName: "heart.fill")
-            bookmarkButton.tintColor = .red // 즐겨찾기 되면 빨간색으로
+            bookmarkButton.tintColor = .white
         } else {
             bookmarkButton.image = UIImage(systemName: "heart")
-            bookmarkButton.tintColor = .white // 즐겨찾기 안 되면 흰색으로
+            bookmarkButton.tintColor = .white
         }
     }
     

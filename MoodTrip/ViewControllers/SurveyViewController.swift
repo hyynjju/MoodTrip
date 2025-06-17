@@ -31,9 +31,63 @@ class SurveyViewController: UIViewController {
     
     func setupQuestions() {
         questions = [
-            (key: "calm", question: "How do you feel now?", options: [("😊 Happy", 90), ("😐 Okay", 60), ("😠 Angry", 30)]),
-            (key: "family", question: "Who are you traveling with?", options: [("👤 Alone", 50), ("👪 Family", 90), ("🧑‍🤝‍🧑 Friends", 70)]),
-            (key: "nature", question: "What kind of place do you want?", options: [("🏙 City", 40), ("🌳 Nature", 80), ("🏖 Beach", 90)])
+            (
+                key: "calm",
+                question: "How do you feel now?",
+                options: [
+                    ("😄 Very Happy", 100),
+                    ("😊 Happy", 80),
+                    ("😐 Okay", 60),
+                    ("😕 Slightly Upset", 40),
+                    ("😠 Angry", 20)
+                ]
+            ),
+            (
+                key: "family",
+                question: "Who are you traveling with?",
+                options: [
+                    ("👤 Alone", 50),
+                    ("🧑‍🤝‍🧑 Partner", 70),
+                    ("👨‍👩‍👦 Family", 90),
+                    ("👫 Friends", 80),
+                    ("👥 Group", 60)
+                ]
+            ),
+            (
+                key: "nature",
+                question: "What kind of place do you want?",
+                options: [
+                    ("🏙 City", 40),
+                    ("🏞 Mountain", 70),
+                    ("🌳 Nature", 80),
+                    ("🏖 Beach", 90),
+                    ("🏕 Countryside", 60)
+                ]
+            ),
+            (
+                key: "activity",
+                question: "What activity are you in the mood for?",
+                options: [
+                    ("🎨 Arts & Culture", 60),
+                    ("🛍 Shopping", 50),
+                    ("🍽 Food Tour", 80),
+                    ("🚶‍♂️ Walking", 70),
+                    ("📸 Photo Spot", 90),
+                    ("🎢 Adventure", 100)
+                ]
+            ),
+            (
+                key: "intensity",
+                question: "How active should your trip be?",
+                options: [
+                    ("🛋 Totally relaxing", 10),
+                    ("🧘 Gentle walk", 30),
+                    ("🚶 Casual stroll", 50),
+                    ("🥾 Light hiking", 70),
+                    ("🚴 Active exploring", 90),
+                    ("🧗 Intense adventure", 100)
+                ]
+            )
         ]
     }
     
@@ -98,7 +152,7 @@ class SurveyViewController: UIViewController {
             
             var score2 = 0
             for (key, userScore) in self.scores {
-                let placeScore = $1.scores[key] ?? 0
+                let placeScore = $1.scores[key] ?? 0    
                 score2 += 100 - abs(userScore - placeScore)
             }
             return score1 < score2

@@ -18,6 +18,8 @@ class SurveyQuestionView: UIView {
     private func setupUI(question: String, options: [(String, Int)]) {
         // 질문 라벨
         let label = UILabel()
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
         label.text = question
         label.textColor = .white
         label.font = .happyFont(ofSize: 24)
@@ -26,7 +28,7 @@ class SurveyQuestionView: UIView {
         addSubview(label)
         
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor, constant: 40),
+            label.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])

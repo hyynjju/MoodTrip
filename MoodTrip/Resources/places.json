@@ -9,7 +9,9 @@
         "scores": {
             "calm": 90,
             "family": 80,
-            "nature": 95
+            "nature": 95,
+            "activity": 80,
+            "intensity": 60
         },
         "tags": ["nature", "beach"],
         "recommendedDuration": "3 days 2 nights",
@@ -27,7 +29,9 @@
         "scores": {
             "calm": 50,
             "family": 70,
-            "nature": 30
+            "nature": 30,
+            "activity": 90,
+            "intensity": 70
         },
         "tags": ["city", "culture"],
         "recommendedDuration": "2 days 1 night",
@@ -45,7 +49,9 @@
         "scores": {
             "calm": 70,
             "family": 60,
-            "nature": 80
+            "nature": 80,
+            "activity": 75,
+            "intensity": 55
         },
         "tags": ["beach", "seafood"],
         "recommendedDuration": "2 days 1 night",
@@ -63,7 +69,9 @@
         "scores": {
             "calm": 80,
             "family": 90,
-            "nature": 70
+            "nature": 70,
+            "activity": 65,
+            "intensity": 40
         },
         "tags": ["history", "temple"],
         "recommendedDuration": "Day trip",
@@ -81,14 +89,16 @@
         "scores": {
             "calm": 60,
             "family": 50,
-            "nature": 40
+            "nature": 40,
+            "activity": 60,
+            "intensity": 40
         },
         "tags": ["modern", "harbor"],
         "recommendedDuration": "Day trip",
         "bestWith": "Solo",
         "address": "Incheon, South Korea",
         "detailedDescription": "Incheon is a gateway city located west of Seoul, known for its international airport and coastal charm. The city blends modern infrastructure with coastal attractions like Songdo Central Park and Wolmido Island. It’s a great choice for solo travelers looking for a quick getaway, harbor views, and a taste of Korea’s city life outside Seoul."
-    },    
+    },
     {
         "id": 6,
         "name": "Andong",
@@ -99,7 +109,9 @@
         "scores": {
             "calm": 85,
             "family": 70,
-            "nature": 75
+            "nature": 75,
+            "activity": 60,
+            "intensity": 35
         },
         "tags": ["culture", "folk"],
         "recommendedDuration": "Day trip",
@@ -117,7 +129,9 @@
         "scores": {
             "calm": 75,
             "family": 65,
-            "nature": 85
+            "nature": 85,
+            "activity": 70,
+            "intensity": 50
         },
         "tags": ["beach", "coffee"],
         "recommendedDuration": "2 days 1 night",
@@ -135,7 +149,9 @@
         "scores": {
             "calm": 80,
             "family": 85,
-            "nature": 90
+            "nature": 90,
+            "activity": 85,
+            "intensity": 90
         },
         "tags": ["mountain", "hiking"],
         "recommendedDuration": "2 days 1 night",
@@ -153,7 +169,9 @@
         "scores": {
             "calm": 75,
             "family": 60,
-            "nature": 85
+            "nature": 85,
+            "activity": 65,
+            "intensity": 50
         },
         "tags": ["harbor", "island"],
         "recommendedDuration": "2 days 1 night",
@@ -171,7 +189,9 @@
         "scores": {
             "calm": 65,
             "family": 75,
-            "nature": 70
+            "nature": 70,
+            "activity": 75,
+            "intensity": 55
         },
         "tags": ["lake", "romance"],
         "recommendedDuration": "Day trip",
@@ -189,7 +209,9 @@
         "scores": {
             "calm": 55,
             "family": 65,
-            "nature": 60
+            "nature": 60,
+            "activity": 65,
+            "intensity": 40
         },
         "tags": ["science", "city"],
         "recommendedDuration": "Day trip",
@@ -207,7 +229,9 @@
         "scores": {
             "calm": 85,
             "family": 70,
-            "nature": 80
+            "nature": 80,
+            "activity": 75,
+            "intensity": 55
         },
         "tags": ["nightview", "coast"],
         "recommendedDuration": "2 days 1 night",
@@ -225,7 +249,9 @@
         "scores": {
             "calm": 70,
             "family": 80,
-            "nature": 60
+            "nature": 60,
+            "activity": 85,
+            "intensity": 60
         },
         "tags": ["hanok", "food"],
         "recommendedDuration": "2 days 1 night",
@@ -243,7 +269,9 @@
         "scores": {
             "calm": 60,
             "family": 55,
-            "nature": 75
+            "nature": 75,
+            "activity": 60,
+            "intensity": 45
         },
         "tags": ["industry", "park"],
         "recommendedDuration": "Day trip",
@@ -261,7 +289,9 @@
         "scores": {
             "calm": 70,
             "family": 60,
-            "nature": 75
+            "nature": 75,
+            "activity": 65,
+            "intensity": 50
         },
         "tags": ["river", "filming"],
         "recommendedDuration": "Day trip",
