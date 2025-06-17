@@ -53,8 +53,8 @@ class SavedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        setupUI()
-        setupChildControllers()
+        setupChildControllers() // 자식 컨트롤러 먼저 설정 (뷰가 전체를 덮도록)
+        setupUI() // UI 요소를 그 위에 추가
         setupGestureRecognizers()
     }
 
@@ -74,6 +74,10 @@ class SavedViewController: UIViewController {
     private func setupUI() {
         view.addSubview(segmentControl)
         view.addSubview(selectionIndicator)
+        
+        // segmentControl이 항상 최상단에 오도록
+        view.bringSubviewToFront(segmentControl)
+        view.bringSubviewToFront(selectionIndicator)
         
         segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
         
@@ -97,7 +101,7 @@ class SavedViewController: UIViewController {
         view.addSubview(savedListVC.view)
         savedListVC.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            savedListVC.view.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 20),
+            savedListVC.view.topAnchor.constraint(equalTo: view.topAnchor), // 상단 여백 없이 뷰 전체를 덮도록 변경
             savedListVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             savedListVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             savedListVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -109,7 +113,7 @@ class SavedViewController: UIViewController {
         view.addSubview(savedMapVC.view)
         savedMapVC.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            savedMapVC.view.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 20),
+            savedMapVC.view.topAnchor.constraint(equalTo: view.topAnchor), // 상단 여백 없이 뷰 전체를 덮도록 변경
             savedMapVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             savedMapVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             savedMapVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
