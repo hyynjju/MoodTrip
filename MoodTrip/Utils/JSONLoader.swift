@@ -4,12 +4,18 @@ import Foundation
 class JSONLoader {
     /// 파일명을 통해 [Place] 배열을 반환
     static func loadPlaces(from fileName: String) -> [Place] {
-        guard let url = Bundle.main.url(forResource: fileName, withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let places = try? JSONDecoder().decode([Place].self, from: data) else {
-            print("❌ JSON 로딩 실패: \(fileName).json")
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: "json") else {
+            print("❌ 파일을 찾을 수 없습니다: \(fileName).json")
             return []
         }
-        return places
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let places = try JSONDecoder().decode([Place].self, from: data)
+            return places
+        } catch {
+            print("❌ JSON 파싱 중 오류 발생: \(error.localizedDescription)")
+            return []
+        }
     }
 }
