@@ -28,7 +28,7 @@ class SurveyQuestionView: UIView {
         addSubview(label)
         
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            label.topAnchor.constraint(equalTo: topAnchor, constant: -60),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])

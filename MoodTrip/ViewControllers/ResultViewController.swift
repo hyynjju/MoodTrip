@@ -367,7 +367,7 @@ class ResultViewController: UIViewController {
             
             infoRowStack.topAnchor.constraint(equalTo: tagStack.bottomAnchor, constant: -16),
             infoRowStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            infoRowStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            infoRowStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             
             circularProgressView.widthAnchor.constraint(equalToConstant: 120),
             circularProgressView.heightAnchor.constraint(equalToConstant: 120),
