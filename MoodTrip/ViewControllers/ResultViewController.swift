@@ -432,7 +432,7 @@ class ResultViewController: UIViewController {
     
     private func navigateToMap() {
         guard let place = place else { return }
-        let mapVC = MapViewController()
+        let mapVC = SavedMapViewController()
         mapVC.place = place
         navigationController?.pushViewController(mapVC, animated: true)
     }
