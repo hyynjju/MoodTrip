@@ -12,8 +12,12 @@ class MainTabBarController: UITabBarController {
 
         let mainNav = UINavigationController(rootViewController: mainVC)
         let savedNav = UINavigationController(rootViewController: savedVC)
+        
+        let insightVC = InsightViewController()
+        insightVC.tabBarItem = UITabBarItem(title: "Insights", image: UIImage(systemName: "chart.bar"), tag: 3)
+        let insightNav = UINavigationController(rootViewController: insightVC)
 
-        viewControllers = [mainNav, savedNav]
+        viewControllers = [mainNav, savedNav, insightNav]
         tabBar.barTintColor = .black
         tabBar.tintColor = UIColor(named: "PointColor") ?? .systemBlue
     }

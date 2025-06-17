@@ -126,6 +126,13 @@ class SurveyViewController: UIViewController {
         questionView.onSelect = { score in
             print("🎯 선택된 점수: \(score) for key \(q.key)")
             self.scores[q.key] = score
+            // Store selected label and score in UserDefaults as array of dictionaries
+            var storedAnswers = UserDefaults.standard.dictionary(forKey: "surveyAnswers") as? [String: Any] ?? [:]
+            let selectedLabel = q.options.first(where: { $0.1 == score })?.0 ?? "Unknown"
+            var history = storedAnswers[q.key] as? [[String: Any]] ?? []
+            history.append(["label": selectedLabel, "score": score])
+            storedAnswers[q.key] = history
+            UserDefaults.standard.setValue(storedAnswers, forKey: "surveyAnswers")
             self.currentQuestionIndex += 1
             self.showCurrentQuestion()
         }
@@ -152,7 +159,7 @@ class SurveyViewController: UIViewController {
             
             var score2 = 0
             for (key, userScore) in self.scores {
-                let placeScore = $1.scores[key] ?? 0    
+                let placeScore = $1.scores[key] ?? 0
                 score2 += 100 - abs(userScore - placeScore)
             }
             return score1 < score2
