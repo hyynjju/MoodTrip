@@ -478,6 +478,7 @@ class ResultViewController: UIViewController {
 
             // Show enhanced toast after updating check state
             let message = isVisited ? "Marked as unvisited" : "Marked as visited!"
+            let messageFont = UIFont.appFont(ofSize: 16, weight: .bold)
             
             // Create toast container with blur effect
             let toastContainer = UIView()
@@ -520,7 +521,7 @@ class ResultViewController: UIViewController {
             let messageLabel = UILabel()
             messageLabel.text = message
             messageLabel.textColor = .white
-            messageLabel.font = .systemFont(ofSize: 16, weight: .medium)
+            messageLabel.font = messageFont
             messageLabel.textAlignment = .left
             messageLabel.translatesAutoresizingMaskIntoConstraints = false
             

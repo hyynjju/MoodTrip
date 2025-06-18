@@ -21,6 +21,7 @@ class InsightViewController: UIViewController {
         loadAnswers()
         setupScrollView()
         setupChartsAndSummary()
+        addBottomGradientOverlay()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -113,7 +114,7 @@ class InsightViewController: UIViewController {
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 24),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -24),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -24),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -200),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -48)
         ])
     }
@@ -240,7 +241,7 @@ class InsightViewController: UIViewController {
         chart.legend.enabled = false
         chart.rightAxis.enabled = false
         chart.leftAxis.enabled = false
-        chart.xAxis.enabled = false
+        chart.xAxis.labelRotationAngle = -45
         chart.scaleXEnabled = false
         chart.scaleYEnabled = false
         chart.doubleTapToZoomEnabled = false
@@ -254,7 +255,7 @@ class InsightViewController: UIViewController {
             let sorted = activityCounts.sorted { $0.value > $1.value }
             for (index, entry) in sorted.enumerated() {
                 barEntries.append(BarChartDataEntry(x: Double(index), y: Double(entry.value)))
-                barLabels.append(entry.key)
+                barLabels.append(smartTruncateLabel(entry.key))
             }
         }
 
@@ -318,7 +319,7 @@ class InsightViewController: UIViewController {
             // Sort by descending value
             let sorted = familyCounts.sorted { $0.value > $1.value }
             for (label, count) in sorted {
-                pieEntries.append(PieChartDataEntry(value: Double(count), label: label))
+                pieEntries.append(PieChartDataEntry(value: Double(count), label: smartTruncateLabel(label)))
             }
         }
 
@@ -526,3 +527,47 @@ class InsightViewController: UIViewController {
         return result.isEmpty ? nil : result
     }
 }
+
+private extension InsightViewController {
+    func addBottomGradientOverlay() {
+        let gradientView = UIView()
+        gradientView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(gradientView)
+        view.bringSubviewToFront(gradientView)
+
+        NSLayoutConstraint.activate([
+            gradientView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            gradientView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            gradientView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            gradientView.heightAnchor.constraint(equalToConstant: 120)
+        ])
+
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor.black.withAlphaComponent(1.0).cgColor,
+            UIColor.black.withAlphaComponent(1.0).cgColor,
+            UIColor.black.withAlphaComponent(0.0).cgColor
+        ]
+        gradientLayer.locations = [0.0, 0.5, 1.0]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 1)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 0)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 120)
+
+        gradientView.layer.addSublayer(gradientLayer)
+    }
+}
+
+    // MARK: - Helper Methods
+
+    /// Truncate and abbreviate activity/family labels for chart display.
+    private func smartTruncateLabel(_ label: String) -> String {
+        let abbreviations: [String: String] = [
+            "🎨 Arts & Culture": "Culture",
+            "🛍 Shopping": "Shop",
+            "🍽 Food Tour": "Food",
+            "🚶‍♂️ Walking": "Walk",
+            "📸 Photo Spot": "Photo",
+            "🎢 Adventure": "Adventure"
+        ]
+        return abbreviations[label] ?? label
+    }
