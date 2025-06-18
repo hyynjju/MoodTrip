@@ -7,26 +7,26 @@ class ResultViewController: UIViewController {
     var place: Place?
     var userScores: [String: Int] = [:]
     var recommendedPlaces: [Place] = []
-
+    
     private static let buttonHeight: CGFloat = 50.0
     private static let buttonSpacing: CGFloat = 8.0
-
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-
+    
     private var recommendationsCollectionView: UICollectionView!
-
+    
     private let topImageView = UIImageView()
     private var topImageViewHeightConstraint: NSLayoutConstraint!
     private let topImageViewGradientMask = CAGradientLayer()
-
+    
     private let maxTopImageViewHeight: CGFloat = 320
     private let minTopImageViewHeight: CGFloat = 120
     private let scrollOffsetToFade: CGFloat = 100
-
+    
     // ⭐️ 즐겨찾기 버튼을 위한 프로퍼티
     private var bookmarkButton: UIBarButtonItem!
-
+    
     private let locationManager = CLLocationManager()
     private var userLocation: CLLocation?
     private var infoBox: InfoBoxView!
@@ -34,16 +34,16 @@ class ResultViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-
+        
         loadRecommendedPlaces()
         setupUI()
-
+        
         // ⭐️ 네비게이션 바 설정 및 즐겨찾기 버튼 추가
         setupNavigationBar()
-
+        
         // ⭐️ 현재 장소의 즐겨찾기 상태에 따라 버튼 이미지 초기 설정
         updateBookmarkButton()
-
+        
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
@@ -53,7 +53,7 @@ class ResultViewController: UIViewController {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = false
@@ -330,7 +330,7 @@ class ResultViewController: UIViewController {
         view.addSubview(bottomButtonStack)
         
         topImageViewHeightConstraint = topImageView.heightAnchor.constraint(equalToConstant: maxTopImageViewHeight)
-
+        
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -419,17 +419,17 @@ class ResultViewController: UIViewController {
         
         view.bringSubviewToFront(bottomButtonStack)
     }
-
+    
     // MARK: - Distance Update
     private func updateDistanceIfNeeded() {
         guard let userLocation = userLocation else { return }
         guard let place = self.place else { return }
-
+        
         let destination = CLLocation(latitude: place.latitude, longitude: place.longitude)
         let distanceInMeters = userLocation.distance(from: destination)
         let distanceInKilometers = distanceInMeters / 1000.0
         let formattedDistance = String(format: "%.1f km", distanceInKilometers)
-
+        
         infoBox?.updateDistanceLabel(to: formattedDistance)
     }
     
@@ -461,6 +461,8 @@ class ResultViewController: UIViewController {
         navigationController?.pushViewController(mapVC, animated: true)
     }
     
+    // toggleCheckmark 함수의 토스트 부분을 다음과 같이 수정하세요:
+
     private func toggleCheckmark() {
         guard let place = place else { return }
 
@@ -473,6 +475,113 @@ class ResultViewController: UIViewController {
 
         if let checkButton = (self.view.subviews.compactMap { $0 as? UIStackView }.first?.arrangedSubviews.last as? BottomActionButton) {
             checkButton.setChecked(!isVisited)
+
+            // Show enhanced toast after updating check state
+            let message = isVisited ? "Marked as unvisited" : "Marked as visited!"
+            
+            // Create toast container with blur effect
+            let toastContainer = UIView()
+            toastContainer.layer.cornerRadius = 16
+            toastContainer.clipsToBounds = true
+            toastContainer.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Add blur effect
+            let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+            blurEffectView.layer.cornerRadius = 16
+            blurEffectView.clipsToBounds = true
+            blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+            toastContainer.addSubview(blurEffectView)
+            
+            // Add semi-transparent overlay for better contrast
+            let overlayView = UIView()
+            overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+            overlayView.layer.cornerRadius = 16
+            overlayView.clipsToBounds = true
+            overlayView.translatesAutoresizingMaskIntoConstraints = false
+            toastContainer.addSubview(overlayView)
+            
+            // Add subtle shadow
+            toastContainer.layer.shadowColor = UIColor.black.cgColor
+            toastContainer.layer.shadowOffset = CGSize(width: 0, height: 4)
+            toastContainer.layer.shadowRadius = 12
+            toastContainer.layer.shadowOpacity = 0.3
+            toastContainer.layer.masksToBounds = false
+            
+            // Create icon
+            let iconImageView = UIImageView()
+            let iconName = isVisited ? "xmark.circle.fill" : "checkmark.circle.fill"
+            let iconColor = isVisited ? UIColor.systemRed : UIColor.systemGreen
+            iconImageView.image = UIImage(systemName: iconName)?.withTintColor(iconColor, renderingMode: .alwaysOriginal)
+            iconImageView.contentMode = .scaleAspectFit
+            iconImageView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Create message label
+            let messageLabel = UILabel()
+            messageLabel.text = message
+            messageLabel.textColor = .white
+            messageLabel.font = .systemFont(ofSize: 16, weight: .medium)
+            messageLabel.textAlignment = .left
+            messageLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            // Create horizontal stack
+            let contentStack = UIStackView(arrangedSubviews: [iconImageView, messageLabel])
+            contentStack.axis = .horizontal
+            contentStack.spacing = 12
+            contentStack.alignment = .center
+            contentStack.distribution = .fill
+            contentStack.translatesAutoresizingMaskIntoConstraints = false
+            
+            toastContainer.addSubview(contentStack)
+            view.addSubview(toastContainer)
+            
+            // Set up constraints
+            NSLayoutConstraint.activate([
+                // Blur effect view constraints
+                blurEffectView.topAnchor.constraint(equalTo: toastContainer.topAnchor),
+                blurEffectView.leadingAnchor.constraint(equalTo: toastContainer.leadingAnchor),
+                blurEffectView.trailingAnchor.constraint(equalTo: toastContainer.trailingAnchor),
+                blurEffectView.bottomAnchor.constraint(equalTo: toastContainer.bottomAnchor),
+                
+                // Overlay view constraints
+                overlayView.topAnchor.constraint(equalTo: toastContainer.topAnchor),
+                overlayView.leadingAnchor.constraint(equalTo: toastContainer.leadingAnchor),
+                overlayView.trailingAnchor.constraint(equalTo: toastContainer.trailingAnchor),
+                overlayView.bottomAnchor.constraint(equalTo: toastContainer.bottomAnchor),
+                // Toast container constraints
+                toastContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+                toastContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+                toastContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -80),
+                toastContainer.heightAnchor.constraint(equalToConstant: 48),
+                
+                // Content stack constraints
+                contentStack.centerXAnchor.constraint(equalTo: toastContainer.centerXAnchor),
+                contentStack.centerYAnchor.constraint(equalTo: toastContainer.centerYAnchor),
+                contentStack.leadingAnchor.constraint(greaterThanOrEqualTo: toastContainer.leadingAnchor, constant: 20),
+                contentStack.trailingAnchor.constraint(lessThanOrEqualTo: toastContainer.trailingAnchor, constant: -20),
+                
+                // Icon constraints
+                iconImageView.widthAnchor.constraint(equalToConstant: 20),
+                iconImageView.heightAnchor.constraint(equalToConstant: 20)
+            ])
+            
+            // Initial state - invisible and scaled down
+            toastContainer.alpha = 0.0
+            toastContainer.transform = CGAffineTransform(translationX: 0, y: 20).scaledBy(x: 0.9, y: 0.9)
+            
+            // Animate in with spring effect
+            UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [.curveEaseOut], animations: {
+                toastContainer.alpha = 1.0
+                toastContainer.transform = .identity
+            }) { _ in
+                // Animate out after delay
+                UIView.animate(withDuration: 0.4, delay: 2.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.3, options: [.curveEaseIn], animations: {
+                    toastContainer.alpha = 0.0
+                    toastContainer.transform = CGAffineTransform(translationX: 0, y: 10).scaledBy(x: 0.95, y: 0.95)
+                }, completion: { _ in
+                    toastContainer.removeFromSuperview()
+                })
+            }
         }
     }
 }
@@ -553,18 +662,18 @@ class PaddingLabel: UILabel {
 // InfoBoxView 클래스 (변경)
 class InfoBoxView: UIView {
     private var distanceValueLabel: UILabel?
-
+    
     init(tripLength: String, bestWith: String, distance: String) {
         super.init(frame: .zero)
         layer.cornerRadius = 20
         clipsToBounds = true
-
+        
         let backgroundGradientLayer = CAGradientLayer()
         backgroundGradientLayer.colors = [UIColor.white.withAlphaComponent(0.06).cgColor, UIColor.white.withAlphaComponent(0.2).cgColor]
         backgroundGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         backgroundGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         layer.insertSublayer(backgroundGradientLayer, at: 0)
-
+        
         let borderGradientLayer = CAGradientLayer()
         borderGradientLayer.colors = [
             UIColor.white.withAlphaComponent(0.35).cgColor,
@@ -574,36 +683,36 @@ class InfoBoxView: UIView {
         borderGradientLayer.locations = [0.0, 0.33, 1.0]
         borderGradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         borderGradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-
+        
         let borderShapeLayer = CAShapeLayer()
         borderShapeLayer.lineWidth = 3
         borderShapeLayer.strokeColor = UIColor.black.cgColor
         borderShapeLayer.fillColor = nil
-
+        
         borderGradientLayer.mask = borderShapeLayer
-
+        
         layer.addSublayer(borderGradientLayer)
-
+        
         let labels = [("Trip Length", tripLength), ("Best With", bestWith), ("Distance", distance)]
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.distribution = .fillEqually
         stack.alignment = .center
         stack.translatesAutoresizingMaskIntoConstraints = false
-
+        
         for (title, value) in labels {
             let titleLabel = UILabel()
             titleLabel.text = title
             titleLabel.font = .appFont(ofSize: 14)
             titleLabel.textColor = .white.withAlphaComponent(0.7)
             titleLabel.textAlignment = .center
-
+            
             let valueLabel = UILabel()
             valueLabel.text = value
             valueLabel.font = .appFont(ofSize: 18, weight: .bold)
             valueLabel.textColor = .white
             valueLabel.textAlignment = .center
-
+            
             if title == "Distance" {
                 self.distanceValueLabel = valueLabel
             }
@@ -611,15 +720,15 @@ class InfoBoxView: UIView {
                 valueLabel.setContentHuggingPriority(.required, for: .horizontal)
                 valueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
             }
-
+            
             let verticalStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
             verticalStack.axis = .vertical
             verticalStack.alignment = .center
             verticalStack.spacing = 4
-
+            
             stack.addArrangedSubview(verticalStack)
         }
-
+        
         addSubview(stack)
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: topAnchor, constant: 12),
@@ -628,27 +737,27 @@ class InfoBoxView: UIView {
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
     }
-
+    
     func updateDistanceLabel(to newDistance: String) {
         distanceValueLabel?.text = newDistance
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        
         if let backgroundGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask == nil }) {
             backgroundGradientLayer.frame = bounds
         }
-
+        
         if let borderGradientLayer = layer.sublayers?.first(where: { $0 is CAGradientLayer && $0.mask != nil }) as? CAGradientLayer,
-            let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
-
+           let borderShapeLayer = borderGradientLayer.mask as? CAShapeLayer {
+            
             borderGradientLayer.frame = bounds
-
+            
             let path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius)
             borderShapeLayer.path = path.cgPath
         }
