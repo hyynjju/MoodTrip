@@ -9,6 +9,16 @@ class BookmarkCollectionViewCell: UICollectionViewCell {
     private let descriptionLabel = UILabel()
     
     private let gradientLayer = CAGradientLayer()
+    
+    private let visitedLabel: UILabel = {
+        let label = UILabel()
+        label.font = .appFont(ofSize: 14, weight: .bold)
+        label.textAlignment = .center
+        label.layer.cornerRadius = 12
+        label.layer.masksToBounds = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,6 +64,8 @@ class BookmarkCollectionViewCell: UICollectionViewCell {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         imageView.addSubview(descriptionLabel) // Add labels to imageView
 
+        imageView.addSubview(visitedLabel)
+
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -66,7 +78,11 @@ class BookmarkCollectionViewCell: UICollectionViewCell {
 
             descriptionLabel.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 16),
             descriptionLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -16),
-            descriptionLabel.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -16)
+            descriptionLabel.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -16),
+            
+            visitedLabel.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 12),
+            visitedLabel.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 12),
+            visitedLabel.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
 
@@ -115,6 +131,26 @@ class BookmarkCollectionViewCell: UICollectionViewCell {
             imageView.bringSubviewToFront(descriptionLabel)
             setNeedsLayout()
         }
+        
+        let visitedIds = UserDefaults.standard.array(forKey: "visitedPlaceIds") as? [Int] ?? []
+        setVisitedStatus(visitedIds.contains(place.id))
+    }
+    
+    func setVisitedStatus(_ isVisited: Bool) {
+        visitedLabel.text = isVisited ? "Visited" : "Unvisited"
+        visitedLabel.backgroundColor = isVisited ? UIColor.white : UIColor.black.withAlphaComponent(0.5)
+        visitedLabel.textColor = isVisited ? .black : .white
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold)
+        let checkmarkImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)?
+            .withTintColor(isVisited ? .black : .white, renderingMode: .alwaysOriginal)
+        let attachment = NSTextAttachment()
+        attachment.image = checkmarkImage
+        let attributedText = NSMutableAttributedString(attachment: attachment)
+        attributedText.append(NSAttributedString(string: " " + (isVisited ? "Visited" : "Unvisited"), attributes: [.font: UIFont.appFont(ofSize: 14, weight: .bold), .foregroundColor: visitedLabel.textColor]))
+        visitedLabel.attributedText = attributedText
+        
+        visitedLabel.constraints.filter { $0.firstAttribute == .width }.forEach { $0.isActive = false }
+        visitedLabel.widthAnchor.constraint(equalToConstant: isVisited ? 80 : 92).isActive = true
     }
     
     override func prepareForReuse() {

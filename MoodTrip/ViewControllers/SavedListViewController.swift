@@ -87,6 +87,10 @@ extension SavedListViewController: UICollectionViewDataSource {
         }
         let place = bookmarkedPlaces[indexPath.item]
         cell.configure(with: place)
+        // Determine visit status using UserDefaults
+        let visitedPlaces = UserDefaults.standard.array(forKey: "visitedPlaceIDs") as? [Int] ?? []
+        let isVisited = visitedPlaces.contains(place.id)
+        cell.setVisitedStatus(isVisited)
         return cell
     }
 }
