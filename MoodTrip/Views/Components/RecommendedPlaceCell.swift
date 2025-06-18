@@ -94,28 +94,32 @@ class RecommendedPlaceCell: UICollectionViewCell {
         gradientLayer.frame = gradientOverlay.bounds
     }
     
-    func configure(with place: Place, matchingScore: Int) {
+    func configure(with place: Place, matchingScore: Int?) {
         nameLabel.text = place.name
         descriptionLabel.text = place.description
-        matchingScoreBar.score = matchingScore
-        
-        placeImageView.image = nil // Reset image to prevent flicker
-        
+
+        if let score = matchingScore {
+            matchingScoreBar.isHidden = false
+            matchingScoreBar.score = score
+        } else {
+            matchingScoreBar.isHidden = true
+        }
+
+        placeImageView.image = nil
+
         if let url = URL(string: place.imageURL) {
             URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
                 guard let self = self else { return }
                 if let data = data, let image = UIImage(data: data) {
                     DispatchQueue.main.async {
                         self.placeImageView.image = image
-                        // 그라데이션 오버레이는 이미지 위에 오도록 유지 (placeImageView의 서브뷰 중 최상단)
                         self.placeImageView.bringSubviewToFront(self.gradientOverlay)
-                        // 매칭 스코어 바는 그라데이션 위에 오도록 유지
                         self.placeImageView.bringSubviewToFront(self.matchingScoreBar)
-                        self.setNeedsLayout() // 레이아웃 업데이트 요청
+                        self.setNeedsLayout()
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.placeImageView.image = UIImage(named: "placeholderImage") // Fallback image
+                        self.placeImageView.image = UIImage(named: "placeholderImage")
                         self.placeImageView.bringSubviewToFront(self.gradientOverlay)
                         self.placeImageView.bringSubviewToFront(self.matchingScoreBar)
                         self.setNeedsLayout()
@@ -123,7 +127,7 @@ class RecommendedPlaceCell: UICollectionViewCell {
                 }
             }.resume()
         } else {
-            placeImageView.image = UIImage(named: "placeholderImage") // Fallback image
+            placeImageView.image = UIImage(named: "placeholderImage")
             self.placeImageView.bringSubviewToFront(self.gradientOverlay)
             self.placeImageView.bringSubviewToFront(self.matchingScoreBar)
             setNeedsLayout()

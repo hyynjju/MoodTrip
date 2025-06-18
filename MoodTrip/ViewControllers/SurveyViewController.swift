@@ -168,6 +168,7 @@ class SurveyViewController: UIViewController {
         let vc = ResultViewController()
         vc.place = best
         vc.userScores = self.scores // ⭐️ 중요: ResultViewController로 userScores 전달
+        vc.fromSurvey = true
         navigationController?.pushViewController(vc, animated: true)
     }
     

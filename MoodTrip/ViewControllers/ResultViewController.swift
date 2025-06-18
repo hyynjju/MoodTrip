@@ -7,6 +7,7 @@ class ResultViewController: UIViewController {
     var place: Place?
     var userScores: [String: Int] = [:]
     var recommendedPlaces: [Place] = []
+    var fromSurvey: Bool = false
     
     private static let buttonHeight: CGFloat = 50.0
     private static let buttonSpacing: CGFloat = 8.0
@@ -230,8 +231,12 @@ class ResultViewController: UIViewController {
         
         let circularProgressView = CircularProgressView()
         circularProgressView.translatesAutoresizingMaskIntoConstraints = false
-        circularProgressView.score = calculateMatchingScore(for: place)
-        circularProgressView.progress = CGFloat(calculateMatchingScore(for: place)) / 100.0
+        if fromSurvey {
+            circularProgressView.score = calculateMatchingScore(for: place)
+            circularProgressView.progress = CGFloat(calculateMatchingScore(for: place)) / 100.0
+        } else {
+            circularProgressView.isHidden = true
+        }
         
         let infoRowStack = UIStackView(arrangedSubviews: [nameDescStack, circularProgressView])
         infoRowStack.axis = .horizontal
@@ -599,7 +604,11 @@ extension ResultViewController: UICollectionViewDataSource {
         }
         let place = recommendedPlaces[indexPath.item]
         let score = calculateMatchingScore(for: place)
-        cell.configure(with: place, matchingScore: score)
+        if fromSurvey {
+            cell.configure(with: place, matchingScore: score)
+        } else {
+            cell.configure(with: place, matchingScore: nil)
+        }
         return cell
     }
 }
