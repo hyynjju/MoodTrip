@@ -55,19 +55,11 @@ class SavedMapViewController: UIViewController {
             collectionView.heightAnchor.constraint(equalToConstant: 200)
         ])
         if #available(iOS 15.0, *) {
-            var globeCamera = MKMapCamera()
-            globeCamera.centerCoordinate = CLLocationCoordinate2D(latitude: 35.8, longitude: 127.5)
-            globeCamera.pitch = 0
-            globeCamera.altitude = 30000000 // High altitude for initial globe view
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                let focusedCamera = MKMapCamera()
-                focusedCamera.centerCoordinate = CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780) // Example coordinate (Seoul)
-                focusedCamera.altitude = 3000000
-                UIView.animate(withDuration: 2.0, animations: {
-                    self.mapView.setCamera(focusedCamera, animated: true)
-                })
-            }
-            mapView.setCamera(globeCamera, animated: false)
+            let focusedCamera = MKMapCamera()
+            focusedCamera.centerCoordinate = CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780) // Seoul
+            focusedCamera.altitude = 3000000
+            focusedCamera.pitch = 0
+            mapView.setCamera(focusedCamera, animated: false)
         }
     }
 
