@@ -1,6 +1,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import Foundation
 
 class ResultViewController: UIViewController {
     var place: Place?
@@ -308,6 +309,7 @@ class ResultViewController: UIViewController {
             self?.toggleCheckmark()
         }
         checkButton.translatesAutoresizingMaskIntoConstraints = false
+        checkButton.setChecked(VisitedPlaceManager.isVisited(placeID: place.id))
         
         let bottomButtonStack = UIStackView(arrangedSubviews: [mapButton, checkButton])
         bottomButtonStack.axis = .horizontal
@@ -460,9 +462,17 @@ class ResultViewController: UIViewController {
     }
     
     private func toggleCheckmark() {
-        print("다녀온 여행지 체크 토글 (추후 기능 추가 예정)")
+        guard let place = place else { return }
+
+        let isVisited = VisitedPlaceManager.isVisited(placeID: place.id)
+        if isVisited {
+            VisitedPlaceManager.removeVisited(placeID: place.id)
+        } else {
+            VisitedPlaceManager.addVisited(placeID: place.id)
+        }
+
         if let checkButton = (self.view.subviews.compactMap { $0 as? UIStackView }.first?.arrangedSubviews.last as? BottomActionButton) {
-            checkButton.setChecked(true)
+            checkButton.setChecked(!isVisited)
         }
     }
 }

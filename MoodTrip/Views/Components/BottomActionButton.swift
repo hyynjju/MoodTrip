@@ -84,6 +84,7 @@ class BottomActionButton: UIView {
         imageView.image = UIImage(systemName: "checkmark")
         imageView.tintColor = UIColor.white.withAlphaComponent(0.5)
         imageView.isHidden = false
+        imageView.isUserInteractionEnabled = false
         return imageView
     }()
     
@@ -182,6 +183,7 @@ class BottomActionButton: UIView {
         case .check:
             // 체크 버튼은 아이콘만 표시
             contentStack.addArrangedSubview(checkmarkImageView)
+            contentStack.isUserInteractionEnabled = false
             
             NSLayoutConstraint.activate([
                 checkmarkImageView.widthAnchor.constraint(equalToConstant: Self.iconSize),
@@ -198,7 +200,8 @@ class BottomActionButton: UIView {
     // MARK: - 체크마크 상태 변경
     func setChecked(_ isChecked: Bool) {
         self.isChecked = isChecked
-        checkmarkImageView.isHidden = !isChecked
+        checkmarkImageView.isHidden = false
+        checkmarkImageView.isUserInteractionEnabled = false
         
         // 체크 상태에 따라 배경 그라데이션 변경
         if type == .check {
