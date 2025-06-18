@@ -90,7 +90,7 @@ class MainViewController: UIViewController {
     private func setupUI() {
         // "Hello, let's find your place" 레이블
         let mainTitleLabel = UILabel()
-        mainTitleLabel.text = "Hello,\nlet's find your place"
+        mainTitleLabel.text = "Discover where\nyour mood takes you"
         mainTitleLabel.textColor = .white
         mainTitleLabel.font = .appFont(ofSize: 34, weight: .bold)
         mainTitleLabel.numberOfLines = 2
