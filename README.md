@@ -7,8 +7,6 @@
 >
 > 설문 기반 매칭과 여행 후 기록, 그리고 인사이트 차트를 통해 나만의 여행 감성을 발견해보세요.
 
----
-
 ## 🎯 주요 기능
 
 | ✨ 메인 화면 | 🗺 지도 연동 |
@@ -23,8 +21,6 @@
 |:----------------------:|:-----------------:|
 | ![](docs/save.png) | ![](docs/insight.png) |
 
----
-
 ## 🛠️ 사용 기술
 
 | 구분           | 기술 스택                                |
@@ -33,7 +29,6 @@
 | **데이터 저장**   | UserDefaults 기반 간단 저장                |
 | **차트 시각화**   | DGCharts 기반 감정 분석 차트 시각화             |
 
----
 
 ## 🧠 감정 설문 기반 추천 알고리즘
 
@@ -53,19 +48,23 @@
                              인사이트 차트 및 히스토리 시각화
 ```
 
----
+## 👩‍💻 개발자
 
-## 🧑‍💻 개발 기여
-
-| 이름        | 역할                | 주요 기여                                                               |
-| --------- | ----------------- | ------------------------------------------------------------------- |
-| Hyunju Cho | iOS 개발, UI/UX 디자인 | 전체 앱 설계, 감정 기반 추천 로직, UI 디자인 및 코드 구현, 차트 시각화, UserDefaults 저장 구조 설계 |
-
----
-
-## 📮 문의 및 피드백
-
-[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:hyynjju@gmail.com)
-[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/hyynjju)
-
-감정을 기록하고 나만의 여행 스타일을 발견해보세요. 당신만의 MoodTrip이 기다리고 있습니다. 🌈
+<table>
+  <tr>
+    <td width="120">
+      <img src="https://avatars.githubusercontent.com/hyynjju" width="140" style="border-radius:50%"><br>
+    </td>
+    <td>
+      <h3>Hyunju Cho</h3>
+      <p><strong>📱 iOS Developer / 🎨 UX/UI Designer</strong></p>
+      <p>전체 앱 설계 및 감정 기반 추천 로직 설계,<br>UX/UI 디자인 및 구현, 차트 시각화, 데이터 저장 구조 설계</p>
+      <a href="mailto:hyynjju@gmail.com">
+        <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
+      </a>
+      <a href="https://www.instagram.com/hyynjju">
+        <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white"/>
+      </a>
+    </td>
+  </tr>
+</table>
